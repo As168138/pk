@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>开奖统计 · 命中周期追踪</title>
+<title>4码打狗法</title>
 <link rel="icon" href="data:,">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -50,7 +50,7 @@
   .ref-streak { font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 8px; background: #e2e8f0; color: #64748b; line-height: 1.4; min-height: 14px; }
   .ref-streak.streak-hit { background: #d1fae5; color: #047857; }
   .ref-streak.streak-miss { background: #fee2e2; color: #b91c1c; }
-  .ref-streak.hidden { visibility: hidden; }
+  .ref-streak.hidden { display: block !important; visibility: hidden; }
 
   #refDigitGroup .ref-btn { min-width: 52px; }
 
@@ -159,23 +159,130 @@
 
   .toast { position: fixed; right: 24px; bottom: 24px; padding: 12px 20px; background: #0f172a; color: #fff; border-radius: 10px; font-size: 14px; box-shadow: 0 6px 24px rgba(0,0,0,.25); z-index: 9999; animation: toast-in .3s ease-out; pointer-events: none; max-width: 380px; }
   @keyframes toast-in { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ===== 大小走势 ===== */
+  .trend-scroll {
+    overflow-x: auto;
+    overflow-y: auto;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    background: #f8fafc;
+    padding: 8px 6px;
+    scrollbar-width: thin;
+  }
+  .trend-scroll::-webkit-scrollbar { width: 8px; height: 8px; }
+  .trend-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+  .trend-cols {
+    display: flex;
+    align-items: flex-start;
+    gap: 0;
+    min-height: 96px;
+  }
+  .trend-col {
+    flex: 0 0 auto;
+    width: 28px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 2px 0;
+    border-right: 1px solid #e2e8f0;
+  }
+  .trend-col:last-child { border-right: none; }
+  .trend-col .tx {
+    display: block;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.1;
+    padding: 1px 0;
+    font-family: inherit;
+    white-space: nowrap;
+    user-select: none;
+  }
+  .trend-col .tx.big   { color: #ef4444; }
+  .trend-col .tx.small { color: #334155; }
+
+  /* 走势卡片放在右列时撑满剩余空间 */
+  .data-right #trendBox {
+    margin-bottom: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    flex: 1 1 auto;
+  }
+  .data-right #trendBox.hidden { display: none !important; }
+  .data-right #trendBox .trend-scroll { flex: 1 1 auto; min-height: 96px; }
+
+  /* 走势位置选择按钮组（中文，独立于参考位/参考号） */
+  .trend-pos-group {
+    display: inline-flex;
+    gap: 3px;
+    background: #f1f5f9;
+    padding: 3px;
+    border-radius: 8px;
+    margin-left: 4px;
+  }
+  .trend-pos-btn {
+    border: none;
+    background: transparent;
+    min-width: 26px;
+    height: 22px;
+    padding: 0 6px;
+    border-radius: 5px;
+    font-size: 12px;
+    color: #475569;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: .15s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .trend-pos-btn:hover { background: #e2e8f0; }
+  .trend-pos-btn.active {
+    background: #2563eb;
+    color: #fff;
+    box-shadow: 0 1px 3px rgba(37,99,235,.4);
+  }
+
+  /* 走势显示范围：单按钮切换（50期 / 全部） */
+  .trend-limit-btn {
+    margin-left: auto;
+    border: 1px solid #cbd5e1;
+    background: #f8fafc;
+    color: #475569;
+    padding: 4px 14px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: .15s;
+  }
+  .trend-limit-btn:hover { background: #e2e8f0; border-color: #94a3b8; }
+  .trend-limit-btn.all-on {
+    background: #2563eb;
+    border-color: #2563eb;
+    color: #fff;
+    box-shadow: 0 1px 3px rgba(37,99,235,.4);
+  }
 </style>
 </head>
 <body>
 <div class="wrap">
 
-  <h1>开奖统计 · 命中周期追踪</h1>
+  <h1>4码打狗法</h1>
   <div class="sub">数据源：api68 · 实时直播 + 自动获取 + 按规则回测 + 命中周期分析</div>
 
   <div class="card">
     <div class="card-title">开奖直播 <span class="live-dot"></span></div>
     <div class="live-box">
-      <iframe scrolling="no" width="100%" height="45px" frameborder="0"
-              src="https://kj.1689684.com/view/pk10.html?1?10037?null?d?1689691.com"
-              referrerpolicy="no-referrer"></iframe>
+      <iframe scrolling="no" width="100%" height="46px" frameborder="0"
+              src="https://kj.16891836.com/view/pk10.html?1?10035?null?d?1689687.com"></iframe>
     </div>
     <div class="live-note">
-      <a href="https://kj.1689684.com/view/pk10.html?1?10037?null?d?1689691.com"
+      <a href="https://kj.16891836.com/view/pk10.html?1?10035?null?d?1689687.com"
          target="_blank" rel="noopener">在新窗口打开 ↗</a>
     </div>
   </div>
@@ -230,6 +337,29 @@
           <span class="p-issue" id="pIssue">—</span>
           <span class="p-pos" id="pPos">投注第 — 位</span>
           <span class="p-nums" id="pNums">----</span>
+        </div>
+
+        <!-- ================= 大小走势 ================= -->
+        <div id="trendBox" class="card hidden">
+          <div class="card-title">
+            大小走势
+            <span class="trend-pos-group" id="trendPosGroup">
+              <button class="trend-pos-btn active" data-pos="1">一</button>
+              <button class="trend-pos-btn" data-pos="2">二</button>
+              <button class="trend-pos-btn" data-pos="3">三</button>
+              <button class="trend-pos-btn" data-pos="4">四</button>
+              <button class="trend-pos-btn" data-pos="5">五</button>
+              <button class="trend-pos-btn" data-pos="6">六</button>
+              <button class="trend-pos-btn" data-pos="7">七</button>
+              <button class="trend-pos-btn" data-pos="8">八</button>
+              <button class="trend-pos-btn" data-pos="9">九</button>
+              <button class="trend-pos-btn" data-pos="10">十</button>
+            </span>
+            <button class="trend-limit-btn" id="trendLimitBtn">默认显示50期</button>
+          </div>
+          <div class="trend-scroll" id="trendScroll">
+            <div class="trend-cols" id="trendCols"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -374,6 +504,8 @@ const BACKTEST_KEY = 'pk10_backtest_visible_v1';
 const HISTORY_PAGES_KEY = 'pk10_history_pages_v1';
 const REF_MODE_KEY = 'pk10_ref_mode_v1';
 const REF_VALUE_KEY = 'pk10_ref_value_v1';
+const TREND_LIMIT_KEY = 'pk10_trend_limit_v1';
+const TREND_POS_KEY = 'pk10_trend_pos_v1';
 const DEFAULT_DISPLAY_COUNT = 10;
 
 let autoFetchTimer = null;
@@ -384,6 +516,14 @@ let saveTimer = null;
 let fullData = [];
 let showAllRecords = false;
 let showBacktest = false;
+
+/* 走势显示限制：数字（期数）或 'all' */
+let trendLimit = 50;
+
+/* 走势显示位置：1-10，独立于参考位/参考号 */
+let trendPos = 1;
+/* 用户是否手动选择了走势位置，如果为 true 则不自动跟随投注位 */
+let userSelectedTrend = false;
 
 /* ================= 参考选择（位 / 号） ================= */
 function currentRef() {
@@ -500,6 +640,43 @@ function updateToggleButtonText() {
   btn.textContent = showAllRecords ? `仅显示最新${DEFAULT_DISPLAY_COUNT}期` : `显示全部`;
 }
 
+/* ================= 走势显示范围：单按钮切换 50期 / 全部 ================= */
+function applyTrendLimitUI() {
+  const btn = document.getElementById('trendLimitBtn');
+  if (!btn) return;
+  const isAll = (trendLimit === 'all');
+  btn.textContent = isAll ? '全部显示' : '默认显示50期';
+  btn.classList.toggle('all-on', isAll);
+}
+
+function setTrendLimit(v) {
+  trendLimit = (v === 'all') ? 'all' : parseInt(v, 10);
+  try { localStorage.setItem(TREND_LIMIT_KEY, String(trendLimit)); } catch (e) {}
+  applyTrendLimitUI();
+  if (fullData.length >= 2) renderTrend(fullData);
+}
+
+function toggleTrendLimit() {
+  setTrendLimit(trendLimit === 'all' ? 50 : 'all');
+}
+
+/* ================= 走势位置切换（独立于参考位/参考号） ================= */
+function applyTrendPosUI() {
+  document.querySelectorAll('#trendPosGroup .trend-pos-btn').forEach(b => {
+    b.classList.toggle('active', parseInt(b.dataset.pos, 10) === trendPos);
+  });
+}
+
+function setTrendPos(pos) {
+  userSelectedTrend = true; // 用户手动选择，取消自动跟随
+  trendPos = parseInt(pos, 10) || 1;
+  if (trendPos < 1) trendPos = 1;
+  if (trendPos > 10) trendPos = 10;
+  try { localStorage.setItem(TREND_POS_KEY, String(trendPos)); } catch (e) {}
+  applyTrendPosUI();
+  if (fullData.length >= 2) renderTrend(fullData);
+}
+
 /* ================= 数据同步 ================= */
 function readExistingMap() { return new Map(fullData.map(r => [r.issue, r])); }
 
@@ -601,10 +778,10 @@ document.addEventListener('visibilitychange', () => {
 const WORKER_URL = 'https://pk10-proxy.liahongyu.workers.dev/?url=';
 
 const API_CANDIDATES = [
-  'http://api.api68.com/pks/getPksHistoryList.do?lotCode=10037',
-  'https://api.api68.com/pks/getPksHistoryList.do?lotCode=10037',
-  'http://api.api68.com/lottery/getPksHistoryList.do?lotCode=10037',
-  'https://api.api68.com/lottery/getPksHistoryList.do?lotCode=10037'
+  'https://api.api68.com/pks/getPksHistoryList.do?lotCode=10035',
+  'http://api.api68.com/pks/getPksHistoryList.do?lotCode=10035',
+  'https://api.api68.com/lottery/getPksHistoryList.do?lotCode=10035',
+  'http://api.api68.com/lottery/getPksHistoryList.do?lotCode=10035'
 ];
 
 function setFetchStatus(msg, isError = false) {
@@ -708,6 +885,7 @@ async function fetchLatest(isManual = false) {
     if (map.has(latest.issue)) {
       if (isManual) {
         fullData = sortAsc(Array.from(map.values()));
+        userSelectedTrend = false; // 手动获取，恢复跟随
         renderAll(fullData, { rewriteTextarea: true });
         setFetchStatus(`✓ 已是最新 ${latest.issue}`);
         userDirty = false;
@@ -720,6 +898,7 @@ async function fetchLatest(isManual = false) {
     setFetchStatus(`✓ 已获取 ${latest.issue}（新增 1 期）`);
 
     const shouldRewrite = isManual || !userDirty;
+    userSelectedTrend = false; // 新数据到来，恢复跟随
     renderAll(fullData, { rewriteTextarea: shouldRewrite });
     notifyNewData();
     if (isManual) userDirty = false;
@@ -740,7 +919,7 @@ async function onClickFetchHistory() {
     if (btn) { btn.disabled = true; btn.textContent = '等待中...'; }
     setFetchStatus('上一个请求进行中，等待其完成...');
     let waited = 0;
-    while (fetching && waited < 60) {
+    while (fetching && waited < 160) {
       await new Promise(r => setTimeout(r, 100));
       waited++;
     }
@@ -801,6 +980,7 @@ async function fetchHistory(pages = 5, isManual = false) {
       : `拉取成功：新增 ${newCount} 条，共 ${fullData.length} 期`);
 
     const shouldRewrite = isManual || !userDirty;
+    userSelectedTrend = false; // 新数据到来，恢复跟随
     renderAll(fullData, { rewriteTextarea: shouldRewrite });
     if (newCount > 0 && isManual) notifyNewData();
     if (isManual) userDirty = false;
@@ -857,12 +1037,7 @@ function parseData(text) {
   return sortAsc(Array.from(map.values()));
 }
 
-/* ================= 核心推算 =================
- * ref 参数：
- *   { mode:'pos', pos:N }  → 参考位模式：位置固定为第N位
- *   { mode:'digit', digit:'7' } → 参考号模式：数字固定为7，位置动态跟随
- * 兼容旧调用：如果传入数字，按参考位处理
- */
+/* ================= 核心推算 ================= */
 function makePrediction(data, i, ref = 1) {
   if (typeof ref === 'number') ref = { mode: 'pos', pos: ref };
 
@@ -872,22 +1047,20 @@ function makePrediction(data, i, ref = 1) {
   let refPos, refNum, selectPos;
 
   if (ref.mode === 'digit') {
-    // ===== 参考号模式：数字固定，位置动态跟随 =====
-    refNum = ref.digit;                                     // 参考号 = 用户选的数字（固定）
-    const idx = cur.nums.indexOf(ref.digit);                // 该数字在当期出现的位置（0-based）
-    selectPos = idx >= 0 ? idx + 1 : 1;                     // 1-based 位置（动态）
-    refPos = selectPos;                                     // 仅用于展示
+    refNum = ref.digit;
+    const idx = cur.nums.indexOf(ref.digit);
+    selectPos = idx >= 0 ? idx + 1 : 1;
+    refPos = selectPos;
   } else {
-    // ===== 参考位模式：位置固定 =====
     refPos = ref.pos;
-    refNum = cur.nums[refPos - 1];                          // 取该位号码
-    selectPos = posFromDigit(refNum);                       // 号码→位置映射（固定）
+    refNum = cur.nums[refPos - 1];
+    selectPos = posFromDigit(refNum);
   }
 
-  const selectNum = cur.nums[selectPos - 1];                // 选中号
-  const betNums   = BET_MAP[selectNum];                     // 投注号码
-  const prevSame  = prev.nums[selectPos - 1];               // 前一期同位置号码
-  const betPos    = posFromDigit(prevSame);                 // 投注位置
+  const selectNum = cur.nums[selectPos - 1];
+  const betNums   = BET_MAP[selectNum];
+  const prevSame  = prev.nums[selectPos - 1];
+  const betPos    = posFromDigit(prevSame);
 
   return {
     selectIssue: cur.issue, prevIssue: prev.issue,
@@ -963,6 +1136,7 @@ function computeCurrentStreak(data, ref) {
     else if (isHit === lastHit) streak++;
     else break;
   }
+  if (lastHit === null) return null;
   return { hit: lastHit, streak };
 }
 
@@ -984,6 +1158,58 @@ function updateRefStreaks(data) {
 
   document.querySelectorAll('#refDigitGroup .ref-btn').forEach(btn =>
     applyStreak(btn, { mode: 'digit', digit: btn.dataset.digit }));
+}
+
+/* ================= 渲染：大小走势 =================
+ * 走势位置由 trendPos（1-10）控制，默认跟随投注位变动。
+ */
+function renderTrend(data) {
+  const card = document.getElementById('trendBox');
+  const cols = document.getElementById('trendCols');
+  if (!card || !cols) return;
+
+  if (!data || !data.length) {
+    card.classList.add('hidden');
+    return;
+  }
+
+  const posIdx = trendPos - 1;
+
+  // 按显示范围截取（最新一期在最右，取末尾 N 期）
+  const source = (trendLimit === 'all' || !Number.isFinite(trendLimit))
+    ? data
+    : data.slice(Math.max(0, data.length - trendLimit));
+
+  // 把每期归类并合并连续相同大小
+  const groups = [];
+  for (let i = 0; i < source.length; i++) {
+    const raw = source[i].nums[posIdx];
+    const n = raw === '0' ? 10 : parseInt(raw, 10);
+    const type = n >= 6 ? 'big' : 'small';
+    const last = groups[groups.length - 1];
+    if (last && last.type === type) last.count++;
+    else groups.push({ type, count: 1 });
+  }
+
+  // 渲染成列
+  const html = groups.map(g => {
+    const label = g.type === 'big' ? '大' : '小';
+    let inner = '';
+    for (let k = 0; k < g.count; k++) {
+      inner += '<span class="tx ' + g.type + '">' + label + '</span>';
+    }
+    return '<div class="trend-col">' + inner + '</div>';
+  }).join('');
+  cols.innerHTML = html;
+  card.classList.remove('hidden');
+
+  // 滚动到最右端（最新一期）
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      const sc = document.getElementById('trendScroll');
+      if (sc) sc.scrollLeft = sc.scrollWidth;
+    });
+  });
 }
 
 /* ================= 渲染：命中周期 ================= */
@@ -1279,7 +1505,18 @@ function renderAll(data, options = {}) {
   if (n > 500) n = 500;
   const ref = currentRef();
 
+  // ===== 大小走势默认跟随投注位变动 =====
+  const lastIdx = data.length - 1;
+  if (lastIdx >= 1) {
+    const pred = makePrediction(data, lastIdx, ref);
+    if (pred && pred.betPos && !userSelectedTrend) {
+      trendPos = pred.betPos;
+      applyTrendPosUI();
+    }
+  }
+
   updateRefStreaks(data);
+  renderTrend(data);
   renderNextPrediction(data, ref);
   renderHitCycles(data, n, ref);
   if (showBacktest) renderBacktest(data, ref);
@@ -1289,6 +1526,7 @@ function renderAll(data, options = {}) {
 
 /* ================= 主流程 ================= */
 function run() {
+  userSelectedTrend = false; // 点击开始分析，恢复跟随
   const errBox = document.getElementById('err');
   errBox.classList.add('hidden');
   syncTextareaEdits();
@@ -1296,6 +1534,7 @@ function run() {
   if (!data || data.length < 2) {
     showError('至少需要 2 行有效数据（含期号 + 10 位号码）才能推算。');
     updateRefStreaks(null);
+    renderTrend(null);
     return;
   }
   renderAll(data);
@@ -1320,6 +1559,7 @@ function fillDemo() {
   fullData = parseData(demoText);
   document.getElementById('windowSize').value = 20;
   userDirty = true;
+  userSelectedTrend = false; // 填充示例数据，恢复跟随
   persistFullData();
   run();
 }
@@ -1329,13 +1569,16 @@ function clearAll() {
   textarea.value = '';
   fullData = [];
   userDirty = false;
+  userSelectedTrend = false; // 清空后恢复跟随
   try { localStorage.removeItem(LS_KEY); } catch (e) {}
   document.getElementById('err').classList.add('hidden');
   document.getElementById('pLatest').classList.add('hidden');
   document.getElementById('pMain').classList.add('hidden');
   document.getElementById('cycleBox').classList.add('hidden');
+  document.getElementById('trendBox').classList.add('hidden');
   document.getElementById('tbody').innerHTML = '';
   document.getElementById('cycleBody').innerHTML = '';
+  document.getElementById('trendCols').innerHTML = '';
   updateRefStreaks(null);
   applyBacktestVisibility();
   renderColoredDisplay();
@@ -1369,6 +1612,44 @@ window.addEventListener('DOMContentLoaded', () => {
     if (saved === 'true') showBacktest = true;
   } catch (e) {}
   applyBacktestVisibility();
+
+  /* 恢复走势显示范围 */
+  try {
+    const saved = localStorage.getItem(TREND_LIMIT_KEY);
+    if (saved === 'all') {
+      trendLimit = 'all';
+    } else if (saved) {
+      const n = parseInt(saved, 10);
+      if (Number.isFinite(n) && n > 0) trendLimit = n;
+    }
+  } catch (e) {}
+  applyTrendLimitUI();
+
+  /* 走势范围切换按钮（单按钮） */
+  const trendLimitBtn = document.getElementById('trendLimitBtn');
+  if (trendLimitBtn) {
+    trendLimitBtn.addEventListener('click', toggleTrendLimit);
+  }
+
+  /* 恢复走势位置（独立状态，但默认跟随投注位） */
+  try {
+    const saved = localStorage.getItem(TREND_POS_KEY);
+    if (saved) {
+      const n = parseInt(saved, 10);
+      if (Number.isFinite(n) && n >= 1 && n <= 10) trendPos = n;
+    }
+  } catch (e) {}
+  applyTrendPosUI();
+
+  /* 走势位置按钮事件 */
+  const trendPosGroup = document.getElementById('trendPosGroup');
+  if (trendPosGroup) {
+    trendPosGroup.addEventListener('click', (e) => {
+      const btn = e.target.closest('.trend-pos-btn');
+      if (!btn) return;
+      setTrendPos(btn.dataset.pos);
+    });
+  }
 
   const historyPagesSel = document.getElementById('historyPages');
   if (historyPagesSel) {
@@ -1423,6 +1704,7 @@ window.addEventListener('DOMContentLoaded', () => {
       fullData = parseData(saved);
       textarea.value = saved;
       if (fullData.length >= 2) {
+        userSelectedTrend = false; // 恢复数据时，允许跟随
         renderAll(fullData);
         rewriteTextareaDesc(fullData);
       } else if (fullData.length === 1) {
