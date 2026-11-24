@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>4码打狗法</title>
+<title>FT打狗法</title>
 <link rel="icon" href="data:,">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -27,11 +27,11 @@
   .data-left { display: flex; flex-direction: column; min-width: 0; }
   .data-right { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
 
-  .input-wrapper { position: relative; flex: 1; min-height: 460px; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 10px; transition: border-color .15s, background .15s; overflow: hidden; }
+  .input-wrapper { position: relative; flex: 1; min-height: 240px; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 10px; transition: border-color .15s, background .15s; overflow: hidden; --fd-font-scale: 1; }
   .input-wrapper:focus-within { border-color: #2563eb; background: #fff; }
-  .input-wrapper .colored-display { position: absolute; inset: 0; z-index: 1; padding: 16px 18px; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 18px; line-height: 2.0; color: #1f2937; white-space: pre; overflow: hidden; pointer-events: none; user-select: none; }
-  .input-wrapper .colored-display .num { display: inline-flex; align-items: center; justify-content: center; width: 1.75em; height: 1.6em; padding: 0; margin: 0 3px; border-radius: 5px; font-weight: 800; font-size: 0.95em; line-height: 1; vertical-align: middle; box-shadow: 0 1px 2px rgba(0,0,0,.18); letter-spacing: 0; flex: 0 0 auto; }
-  .input-wrapper textarea { position: relative; z-index: 2; width: 100%; height: 100%; min-height: 460px; padding: 16px 18px; border: none; background: transparent; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 18px; line-height: 2.0; resize: none; outline: none; color: transparent; caret-color: #1f2937; white-space: pre; overflow: auto; scrollbar-gutter: stable; }
+  .input-wrapper .colored-display { position: absolute; inset: 0; z-index: 1; padding: 16px 18px; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: calc(18px * var(--fd-font-scale, 1)); line-height: 2.0; color: #1f2937; white-space: pre; overflow: hidden; pointer-events: none; user-select: none; }
+  .input-wrapper .colored-display .num { display: inline-flex; align-items: center; justify-content: center; width: 1.55em; height: 1.42em; padding: 0; margin: 0 1.5px; border-radius: 5px; font-weight: 800; font-size: 0.82em; line-height: 1; vertical-align: middle; box-shadow: 0 1px 2px rgba(0,0,0,.18); letter-spacing: 0; flex: 0 0 auto; }
+  .input-wrapper textarea { position: relative; z-index: 2; width: 100%; min-height: 240px; padding: 16px 18px; border: none; background: transparent; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: calc(18px * var(--fd-font-scale, 1)); line-height: 2.0; resize: none; outline: none; color: transparent; caret-color: #1f2937; white-space: pre; overflow: auto; scrollbar-gutter: stable; display: block; }
   .input-wrapper textarea::placeholder { color: #94a3b8; font-weight: normal; font-size: 14px; }
   .input-wrapper textarea::selection { background: #bfdbfe; color: transparent; }
 
@@ -40,8 +40,12 @@
   .toolbar input[type="number"] { width: 72px; padding: 7px 8px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; text-align: center; outline: none; }
   .toolbar input[type="number"]:focus { border-color: #2563eb; }
 
-  .ref-wrapper { display: flex; align-items: flex-start; gap: 8px; flex-wrap: wrap; width: 100%; }
-  .ref-label { font-size: 13px; color: #475569; white-space: nowrap; padding-top: 10px; }
+  .ref-wrapper { display: flex; align-items: flex-start; gap: 8px; flex-wrap: wrap; width: 100%; position: relative; }
+  .ref-label { font-size: 13px; color: #475569; white-space: nowrap; padding-top: 10px; display: flex; align-items: center; gap: 4px; cursor: pointer; user-select: none; }
+  .ref-label .toggle-icon { font-size: 12px; color: #94a3b8; transition: transform 0.2s; }
+  .ref-wrapper.collapsed .ref-group { display: none !important; }
+  .ref-wrapper.collapsed .ref-label .toggle-icon { transform: rotate(-90deg); color: #cbd5e1; }
+  
   .ref-group { display: flex; flex-wrap: wrap; gap: 6px; background: #f1f5f9; padding: 4px; border-radius: 10px; }
   .ref-btn { background: transparent; border: none; padding: 5px 10px 4px; border-radius: 7px; font-size: 13px; color: #475569; cursor: pointer; transition: .15s; font-family: inherit; font-weight: 500; display: flex; flex-direction: column; align-items: center; gap: 2px; min-width: 62px; }
   .ref-btn:hover { background: #e2e8f0; }
@@ -53,6 +57,103 @@
   .ref-streak.hidden { display: block !important; visibility: hidden; }
 
   #refDigitGroup .ref-btn { min-width: 52px; }
+  #refRule12Group .ref-btn, #refRule22Group .ref-btn { min-width: 54px; }
+  #refRule4Group .ref-btn { min-width: 54px; }
+  #refRule4Group .ref-btn.active { background: #f59e0b; color: #fff; box-shadow: 0 1px 3px rgba(245,158,11,.5); }
+  #refRule4Group .ref-btn.active .ref-streak { background: rgba(255,255,255,.2); color: #fff; }
+
+  #refRule12Group .ref-btn.active { background: #10b981; color: #fff; box-shadow: 0 1px 3px rgba(16,185,129,.5); }
+  #refRule12Group .ref-btn.active .ref-streak { background: rgba(255,255,255,.2); color: #fff; }
+  #refRule22Group .ref-btn.active { background: #8b5cf6; color: #fff; box-shadow: 0 1px 3px rgba(139,92,246,.5); }
+  #refRule22Group .ref-btn.active .ref-streak { background: rgba(255,255,255,.2); color: #fff; }
+
+  /* ===== 开奖数据字号缩放 ===== */
+  .fd-size-group {
+    margin-left: auto;
+    display: inline-flex;
+    gap: 3px;
+    background: #f1f5f9;
+    padding: 3px;
+    border-radius: 8px;
+  }
+  .fd-size-btn {
+    border: none;
+    background: transparent;
+    min-width: 34px;
+    height: 22px;
+    padding: 0 8px;
+    border-radius: 5px;
+    font-size: 12px;
+    color: #475569;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: .15s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .fd-size-btn:hover { background: #e2e8f0; }
+  .fd-size-btn.active {
+    background: #2563eb;
+    color: #fff;
+    box-shadow: 0 1px 3px rgba(37,99,235,.4);
+  }
+
+  /* ===== 备注文本框 ===== */
+  .note-input-wrap {
+    position: absolute;
+    right: 0;
+    top: 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding-top: 2px;
+    flex: 0 0 auto;
+  }
+  .note-input-wrap .ref-label { padding-top: 8px; cursor: default; }
+  .note-input {
+    width: 200px;
+    min-height: 114px;
+    max-height: 240px;
+    padding: 8px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 13px;
+    color: #1f2937;
+    background: #f8fafc;
+    outline: none;
+    resize: vertical;
+    line-height: 1.5;
+    transition: border-color .15s, background .15s, box-shadow .15s;
+    box-sizing: border-box;
+  }
+  .note-input::placeholder { color: #94a3b8; }
+  .note-input:focus {
+    border-color: #2563eb;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(37,99,235,.12);
+  }
+  @media (max-width: 860px) {
+    .note-input-wrap { position: static; width: 100%; }
+    .note-input { width: 100%; }
+  }
+
+  /* 期号范围输入框 */
+  .cross-range-input {
+    width: 110px;
+    padding: 4px 8px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 12px;
+    font-family: ui-monospace, Menlo, Consolas, monospace;
+    outline: none;
+    transition: border-color .15s;
+  }
+  .cross-range-input:focus {
+    border-color: #2563eb;
+  }
 
   button.btn-main { background: #2563eb; color: #fff; }
   button.btn-main:hover { background: #1d4ed8; }
@@ -60,8 +161,9 @@
   button.btn-ghost:hover { background: #cbd5e1; }
   button.btn-clear { background: #fee2e2; color: #b91c1c; }
   button.btn-clear:hover { background: #fecaca; }
-  button.btn-toggle { background: #e0f2fe; color: #0369a1; }
+  button.btn-toggle { background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
   button.btn-toggle:hover { background: #bae6fd; }
+  button.btn-toggle.active { background: #0369a1; color: #fff; border-color: #0369a1; }
   button.btn-backtest { background: #f3e8ff; color: #7c3aed; }
   button.btn-backtest:hover { background: #e9d5ff; }
   button.btn-backtest.active { background: #7c3aed; color: #fff; }
@@ -154,7 +256,6 @@
 
   .err { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; border-radius: 10px; padding: 10px 14px; font-size: 13px; margin-top: 12px; }
   .hidden { display: none !important; }
-  .note-line { font-size: 12px; color: #64748b; margin-top: 10px; padding-top: 10px; border-top: 1px dashed #e2e8f0; }
   .tip-new { display: inline-block; font-size: 12px; color: #1d4ed8; background: #dbeafe; border-radius: 20px; padding: 2px 10px; margin-left: 6px; }
 
   .toast { position: fixed; right: 24px; bottom: 24px; padding: 12px 20px; background: #0f172a; color: #fff; border-radius: 10px; font-size: 14px; box-shadow: 0 6px 24px rgba(0,0,0,.25); z-index: 9999; animation: toast-in .3s ease-out; pointer-events: none; max-width: 380px; }
@@ -202,7 +303,6 @@
   .trend-col .tx.big   { color: #ef4444; }
   .trend-col .tx.small { color: #334155; }
 
-  /* 走势卡片放在右列时撑满剩余空间 */
   .data-right #trendBox {
     margin-bottom: 0;
     display: flex;
@@ -213,7 +313,6 @@
   .data-right #trendBox.hidden { display: none !important; }
   .data-right #trendBox .trend-scroll { flex: 1 1 auto; min-height: 96px; }
 
-  /* 走势位置选择按钮组（中文，独立于参考位/参考号） */
   .trend-pos-group {
     display: inline-flex;
     gap: 3px;
@@ -246,9 +345,7 @@
     box-shadow: 0 1px 3px rgba(37,99,235,.4);
   }
 
-  /* 走势显示范围：单按钮切换（50期 / 全部） */
   .trend-limit-btn {
-    margin-left: auto;
     border: 1px solid #cbd5e1;
     background: #f8fafc;
     color: #475569;
@@ -267,19 +364,22 @@
     color: #fff;
     box-shadow: 0 1px 3px rgba(37,99,235,.4);
   }
+  #trendAutoBtn { margin-left: auto; }
+  #trendLimitBtn { margin-left: 8px; }
 </style>
 </head>
 <body>
 <div class="wrap">
 
-  <h1>4码打狗法</h1>
+  <h1>FT打狗法</h1>
   <div class="sub">数据源：api68 · 实时直播 + 自动获取 + 按规则回测 + 命中周期分析</div>
 
   <div class="card">
     <div class="card-title">开奖直播 <span class="live-dot"></span></div>
     <div class="live-box">
       <iframe scrolling="no" width="100%" height="46px" frameborder="0"
-              src="https://kj.16891836.com/view/pk10.html?1?10035?null?d?1689687.com"></iframe>
+              src="https://kj.16891836.com/view/pk10.html?1?10035?null?d?1689687.com"
+              referrerpolicy="no-referrer"></iframe>
     </div>
     <div class="live-note">
       <a href="https://kj.16891836.com/view/pk10.html?1?10035?null?d?1689687.com"
@@ -288,11 +388,19 @@
   </div>
 
   <div class="card">
-    <div class="card-title">开奖数据 <span class="tip-new">降序排列 · 最新在上</span></div>
+    <div class="card-title">
+      开奖数据 <span class="tip-new">降序排列 · 最新在上</span>
+      <span class="fd-size-group" id="fdSizeGroup">
+        <button class="fd-size-btn" data-scale="0.75">小</button>
+        <button class="fd-size-btn active" data-scale="1">中</button>
+        <button class="fd-size-btn" data-scale="1.45">大</button>
+        <button class="fd-size-btn" data-scale="1.52">特大</button>
+      </span>
+    </div>
 
     <div class="data-grid">
       <div class="data-left">
-        <div class="input-wrapper">
+        <div class="input-wrapper" id="inputWrapper">
           <div class="colored-display" id="coloredDisplay"></div>
           <textarea id="input" placeholder="每行一条，格式：期号 + 号码
 最新数据在最上面，往下是历史数据。"></textarea>
@@ -319,11 +427,9 @@
 
           <label>历史
             <select id="historyPages">
-              <option value="1">50 期</option>
-              <option value="2">100 期</option>
-              <option value="5" selected>250 期</option>
-              <option value="10">500 期</option>
-              <option value="20">1000 期</option>
+              <option value="1">1 页</option>
+              <option value="2" selected>2 页</option>
+              <option value="all">全部</option>
             </select>
           </label>
           <button class="btn-history" id="btnHistory" onclick="onClickFetchHistory()">拉取历史</button>
@@ -339,7 +445,6 @@
           <span class="p-nums" id="pNums">----</span>
         </div>
 
-        <!-- ================= 大小走势 ================= -->
         <div id="trendBox" class="card hidden">
           <div class="card-title">
             大小走势
@@ -355,6 +460,7 @@
               <button class="trend-pos-btn" data-pos="9">九</button>
               <button class="trend-pos-btn" data-pos="10">十</button>
             </span>
+            <button class="trend-limit-btn" id="trendAutoBtn" title="让走势位置自动跟随下期投注位">跟随投注位</button>
             <button class="trend-limit-btn" id="trendLimitBtn">默认显示50期</button>
           </div>
           <div class="trend-scroll" id="trendScroll">
@@ -365,8 +471,10 @@
     </div>
 
     <div class="toolbar">
-      <div class="ref-wrapper">
-        <span class="ref-label">参考位</span>
+      <div class="ref-wrapper" id="wrapper-rule1">
+        <span class="ref-label" onclick="toggleRuleVisibility('rule1')">
+          <span class="toggle-icon">▼</span> 规则一
+        </span>
         <div class="ref-group" id="refGroup">
           <button class="ref-btn active" data-pos="1"><span class="ref-name">第一位</span><span class="ref-streak hidden"></span></button>
           <button class="ref-btn" data-pos="2"><span class="ref-name">第二位</span><span class="ref-streak hidden"></span></button>
@@ -379,10 +487,53 @@
           <button class="ref-btn" data-pos="9"><span class="ref-name">第九位</span><span class="ref-streak hidden"></span></button>
           <button class="ref-btn" data-pos="10"><span class="ref-name">第十位</span><span class="ref-streak hidden"></span></button>
         </div>
+
+        <div class="note-input-wrap">
+          <span class="ref-label">备注</span>
+          <textarea id="noteInput" class="note-input" placeholder="写点备注…（自动保存）" rows="5" spellcheck="false"></textarea>
+        </div>
       </div>
 
-      <div class="ref-wrapper">
-        <span class="ref-label">参考号</span>
+      <div class="ref-wrapper" id="wrapper-rule12">
+        <span class="ref-label" onclick="toggleRuleVisibility('rule12')">
+          <span class="toggle-icon">▼</span> 规则一二
+        </span>
+        <div class="ref-group" id="refRule12Group">
+          <button class="ref-btn active" data-rule12pos="1"><span class="ref-name">第1位</span><span class="ref-streak hidden"></span></button>
+          <button class="ref-btn" data-rule12pos="2"><span class="ref-name">第2位</span><span class="ref-streak hidden"></span></button>
+          <button class="ref-btn" data-rule12pos="3"><span class="ref-name">第3位</span><span class="ref-streak hidden"></span></button>
+          <button class="ref-btn" data-rule12pos="4"><span class="ref-name">第4位</span><span class="ref-streak hidden"></span></button>
+          <button class="ref-btn" data-rule12pos="5"><span class="ref-name">第5位</span><span class="ref-streak hidden"></span></button>
+          <button class="ref-btn" data-rule12pos="6"><span class="ref-name">第6位</span><span class="ref-streak hidden"></span></button>
+          <button class="ref-btn" data-rule12pos="7"><span class="ref-name">第7位</span><span class="ref-streak hidden"></span></button>
+          <button class="ref-btn" data-rule12pos="8"><span class="ref-name">第8位</span><span class="ref-streak hidden"></span></button>
+          <button class="ref-btn" data-rule12pos="9"><span class="ref-name">第9位</span><span class="ref-streak hidden"></span></button>
+          <button class="ref-btn" data-rule12pos="10"><span class="ref-name">第10位</span><span class="ref-streak hidden"></span></button>
+        </div>
+      </div>
+
+      <div class="ref-wrapper" id="wrapper-rule22">
+        <span class="ref-label" onclick="toggleRuleVisibility('rule22')">
+          <span class="toggle-icon">▼</span> 规则二二
+        </span>
+        <div class="ref-group" id="refRule22Group">
+          <button class="ref-btn active" data-rule22pos="1"><span class="ref-name">第1位</span><span class="ref-streak hidden"></span></button>
+          <button class="ref-btn" data-rule22pos="2"><span class="ref-name">第2位</span><span class="ref-streak hidden"></span></button>
+          <button class="ref-btn" data-rule22pos="3"><span class="ref-name">第3位</span><span class="ref-streak hidden"></span></button>
+          <button class="ref-btn" data-rule22pos="4"><span class="ref-name">第4位</span><span class="ref-streak hidden"></span></button>
+          <button class="ref-btn" data-rule22pos="5"><span class="ref-name">第5位</span><span class="ref-streak hidden"></span></button>
+          <button class="ref-btn" data-rule22pos="6"><span class="ref-name">第6位</span><span class="ref-streak hidden"></span></button>
+          <button class="ref-btn" data-rule22pos="7"><span class="ref-name">第7位</span><span class="ref-streak hidden"></span></button>
+          <button class="ref-btn" data-rule22pos="8"><span class="ref-name">第8位</span><span class="ref-streak hidden"></span></button>
+          <button class="ref-btn" data-rule22pos="9"><span class="ref-name">第9位</span><span class="ref-streak hidden"></span></button>
+          <button class="ref-btn" data-rule22pos="10"><span class="ref-name">第10位</span><span class="ref-streak hidden"></span></button>
+        </div>
+      </div>
+
+      <div class="ref-wrapper" id="wrapper-rule2">
+        <span class="ref-label" onclick="toggleRuleVisibility('rule2')">
+          <span class="toggle-icon">▼</span> 规则二
+        </span>
         <div class="ref-group" id="refDigitGroup">
           <button class="ref-btn" data-digit="1"><span class="ref-name">1</span><span class="ref-streak hidden"></span></button>
           <button class="ref-btn" data-digit="2"><span class="ref-name">2</span><span class="ref-streak hidden"></span></button>
@@ -397,14 +548,104 @@
         </div>
       </div>
 
+      <div class="ref-wrapper" id="wrapper-rule4">
+        <span class="ref-label" onclick="toggleRuleVisibility('rule4')">
+          <span class="toggle-icon">▼</span> 规则四
+        </span>
+        <div class="ref-group" id="refRule4Group">
+          <button class="ref-btn active" data-rule4pos="1" title="取本期第k位数字d → 号码取第d位v → 投注d~d+4位循环，号码v"><span class="ref-name">第1位</span><span class="ref-streak hidden"></span></button>
+          <button class="ref-btn" data-rule4pos="2"><span class="ref-name">第2位</span><span class="ref-streak hidden"></span></button>
+          <button class="ref-btn" data-rule4pos="3"><span class="ref-name">第3位</span><span class="ref-streak hidden"></span></button>
+          <button class="ref-btn" data-rule4pos="4"><span class="ref-name">第4位</span><span class="ref-streak hidden"></span></button>
+          <button class="ref-btn" data-rule4pos="5"><span class="ref-name">第5位</span><span class="ref-streak hidden"></span></button>
+          <button class="ref-btn" data-rule4pos="6"><span class="ref-name">第6位</span><span class="ref-streak hidden"></span></button>
+          <button class="ref-btn" data-rule4pos="7"><span class="ref-name">第7位</span><span class="ref-streak hidden"></span></button>
+          <button class="ref-btn" data-rule4pos="8"><span class="ref-name">第8位</span><span class="ref-streak hidden"></span></button>
+          <button class="ref-btn" data-rule4pos="9"><span class="ref-name">第9位</span><span class="ref-streak hidden"></span></button>
+          <button class="ref-btn" data-rule4pos="10"><span class="ref-name">第10位</span><span class="ref-streak hidden"></span></button>
+        </div>
+      </div>
+
       <label>统计最近 <input type="number" id="windowSize" value="20" min="3" max="500"> 期作为起点</label>
       <button class="btn-main" onclick="run()">开始分析</button>
       <button class="btn-toggle" id="toggleViewBtn" onclick="toggleShowAll()">显示全部</button>
       <button class="btn-backtest" id="toggleBacktestBtn" onclick="toggleBacktest()">显示回测</button>
+      <button class="btn-toggle" id="toggleCrossStatsBtn" onclick="togglePanel('crossStats')">连错3统计</button>
+      <button class="btn-toggle" id="toggleCrossDetailPanelBtn" onclick="togglePanel('crossDetail')">连错3明细</button>
+      <button class="btn-toggle" id="toggleCycleBtn" onclick="togglePanel('cycle')">命中周期</button>
       <button class="btn-ghost" onclick="fillDemo()">填充示例数据</button>
       <button class="btn-clear" onclick="clearAll()">清空</button>
     </div>
     <div id="err" class="err hidden"></div>
+  </div>
+
+  <!-- 连错3追踪汇总 -->
+  <div id="crossPosStatsBox" class="card hidden">
+    <div class="card-title" style="justify-content: space-between;">
+      <span style="display:flex; align-items:center; gap:8px;">
+        <span>连错3追踪统计</span>
+        <select id="crossRuleSelect" style="padding: 2px 8px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 13px; outline: none; background:#fff; cursor:pointer;">
+          <option value="pos">规则一</option>
+          <option value="rule12">规则一二</option>
+          <option value="rule22">规则二二</option>
+          <option value="digit">规则二</option>
+          <option value="rule4">规则四</option>
+        </select>
+      </span>
+      <div style="display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: normal; flex-wrap: wrap;">
+        <span style="color: #64748b;">期号范围：</span>
+        <input type="text" id="crossStartIssue" class="cross-range-input" placeholder="起始期号">
+        <span style="color: #64748b;">至</span>
+        <input type="text" id="crossEndIssue" class="cross-range-input" placeholder="结束期号">
+        <button class="btn-toggle" style="padding: 4px 10px; border-radius: 6px; font-size: 12px; margin-left: 4px;" onclick="applyCrossRange()">应用</button>
+        <button class="btn-ghost" style="padding: 4px 10px; border-radius: 6px; font-size: 12px;" onclick="resetCrossRange()">重置</button>
+      </div>
+    </div>
+    <div class="table-box">
+      <table style="min-width: 100%;">
+        <thead>
+          <tr>
+            <th>触发位置</th>
+            <th>追踪位置</th>
+            <th>触发次数</th>
+            <th>命中次数</th>
+            <th>未命中次数</th>
+            <th>待定次数</th>
+            <th>平均命中周期</th>
+            <th>最快命中</th>
+            <th>最慢命中</th>
+            <th>区间内命中率</th>
+          </tr>
+        </thead>
+        <tbody id="crossPosStatsBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 连错3追踪明细 -->
+  <div id="crossPosDetailBox" class="card hidden">
+    <div class="card-title" style="justify-content: space-between;">
+      <span style="display:flex; align-items:center; gap:8px;">
+        <span>连错3追踪明细（连错3触发后，追踪位第几期命中）</span>
+      </span>
+      <button class="btn-toggle" id="toggleCrossDetailBtn" style="padding: 4px 10px; border-radius: 6px; font-size: 12px;" onclick="toggleCrossDetail()">显示全部</button>
+    </div>
+    <div class="table-box">
+      <table style="min-width: 100%;">
+        <thead>
+          <tr>
+            <th>触发位置</th>
+            <th>触发期号</th>
+            <th>追踪位置</th>
+            <th>追踪起点期号</th>
+            <th>命中周期</th>
+            <th>当前期投注(位置+号码)</th>
+            <th>状态</th>
+          </tr>
+        </thead>
+        <tbody id="crossPosDetailBody"></tbody>
+      </table>
+    </div>
   </div>
 
   <div id="cycleBox" class="card hidden">
@@ -419,10 +660,6 @@
         </thead>
         <tbody id="cycleBody"></tbody>
       </table>
-    </div>
-    <div class="note-line">
-      命中周期 = 1 表示起点期的下一期即命中；周期越大表示连续投注越多期才命中。
-      投注位置与投注号码在起点期确定后<b>固定不变</b>，逐期投到命中为止。
     </div>
     <div class="cycle-stats-compact"><div id="cycleStats" class="stats"></div></div>
     <div id="cycleDist" class="dist-box hidden">
@@ -476,6 +713,12 @@ const BET_MAP = {
   '6': '4578', '7': '5689', '8': '6790', '9': '7801', '0': '1289'
 };
 
+/* 规则一二 / 规则二二 使用的 5 位投注号码表（按用户提供的表） */
+const BET_MAP_5 = {
+  '1': '12390', '2': '12340', '3': '12345', '4': '23456', '5': '34567',
+  '6': '45678', '7': '56789', '8': '67890', '9': '78901', '0': '12890'
+};
+
 const BALL_STYLES = {
   '1': { bg: '#FFEB3B', color: '#000000' },
   '2': { bg: '#2196F3', color: '#FFFFFF' },
@@ -494,7 +737,7 @@ const CN = ['一','二','三','四','五','六','七','八','九','十'];
 const refPosName = pos => '第' + (CN[pos - 1] || pos) + '位';
 
 const SEPARATOR = ' ';
-const NUM_SEPARATOR = ' ';
+const NUM_SEPARATOR = '';
 
 /* ================= 状态 ================= */
 const LS_KEY = 'pk10_input_v1';
@@ -506,6 +749,11 @@ const REF_MODE_KEY = 'pk10_ref_mode_v1';
 const REF_VALUE_KEY = 'pk10_ref_value_v1';
 const TREND_LIMIT_KEY = 'pk10_trend_limit_v1';
 const TREND_POS_KEY = 'pk10_trend_pos_v1';
+const TREND_POS_AUTO_KEY = 'pk10_trend_pos_auto_v1';
+const NOTE_KEY = 'pk10_note_v1';
+const FD_SIZE_KEY = 'pk10_fd_size_v1';
+const RULE_VIS_KEY = 'pk10_rule_visibility_v1';
+const PANEL_VIS_KEY = 'pk10_panel_vis_v1';
 const DEFAULT_DISPLAY_COUNT = 10;
 
 let autoFetchTimer = null;
@@ -517,16 +765,126 @@ let fullData = [];
 let showAllRecords = false;
 let showBacktest = false;
 
-/* 走势显示限制：数字（期数）或 'all' */
 let trendLimit = 50;
-
-/* 走势显示位置：1-10，独立于参考位/参考号 */
 let trendPos = 1;
-/* 用户是否手动选择了走势位置，如果为 true 则不自动跟随投注位 */
-let userSelectedTrend = false;
+let trendPosAuto = true;
 
-/* ================= 参考选择（位 / 号） ================= */
+let fdScale = 1;
+
+let crossRangeStart = '';
+let crossRangeEnd = '';
+let crossRuleMode = null;
+
+let showAllCrossDetails = false;
+const DEFAULT_CROSS_DETAIL_COUNT = 20;
+
+// 规则可见性（规则三已删除）
+let ruleVisibility = { rule1: true, rule12: true, rule22: true, rule2: true, rule4: true };
+
+// 分析面板可见性（连错3统计 / 连错3明细 / 命中周期）
+let panelVisible = { crossStats: true, crossDetail: true, cycle: true };
+
+/* ================= 规则显示/隐藏 ================= */
+function toggleRuleVisibility(ruleKey) {
+  ruleVisibility[ruleKey] = !ruleVisibility[ruleKey];
+  try { localStorage.setItem(RULE_VIS_KEY, JSON.stringify(ruleVisibility)); } catch (e) {}
+  applyRuleVisibilityUI();
+}
+
+function applyRuleVisibilityUI() {
+  ['rule1', 'rule12', 'rule22', 'rule2', 'rule4'].forEach(key => {
+    const wrapper = document.getElementById(`wrapper-${key}`);
+    if (wrapper) wrapper.classList.toggle('collapsed', !ruleVisibility[key]);
+  });
+}
+
+/* ================= 分析面板显示/隐藏 ================= */
+function setPanelShown(el, key) {
+  if (!el) return;
+  el.classList.toggle('hidden', !panelVisible[key]);
+}
+
+function applyPanelVisibilityUI() {
+  const mapping = [
+    ['crossStats', 'toggleCrossStatsBtn'],
+    ['crossDetail', 'toggleCrossDetailPanelBtn'],
+    ['cycle', 'toggleCycleBtn']
+  ];
+  mapping.forEach(([key, id]) => {
+    const btn = document.getElementById(id);
+    if (btn) btn.classList.toggle('active', !!panelVisible[key]);
+  });
+  if (!panelVisible.crossStats) {
+    const el = document.getElementById('crossPosStatsBox');
+    if (el) el.classList.add('hidden');
+  }
+  if (!panelVisible.crossDetail) {
+    const el = document.getElementById('crossPosDetailBox');
+    if (el) el.classList.add('hidden');
+  }
+  if (!panelVisible.cycle) {
+    const el = document.getElementById('cycleBox');
+    if (el) el.classList.add('hidden');
+  }
+}
+
+function togglePanel(key) {
+  panelVisible[key] = !panelVisible[key];
+  try { localStorage.setItem(PANEL_VIS_KEY, JSON.stringify(panelVisible)); } catch (e) {}
+  applyPanelVisibilityUI();
+  if (panelVisible[key] && fullData.length >= 2) {
+    renderAll(fullData);
+  }
+}
+
+/* ================= 开奖数据字号缩放 ================= */
+function applyFdScale() {
+  const wrap = document.querySelector('.input-wrapper');
+  if (wrap) wrap.style.setProperty('--fd-font-scale', fdScale);
+  document.querySelectorAll('#fdSizeGroup .fd-size-btn').forEach(b => {
+    b.classList.toggle('active', parseFloat(b.dataset.scale) === fdScale);
+  });
+  fitInputHeight();
+}
+
+/* ================= 输入框高度自适应 ================= */
+function fitInputHeight() {
+  const wrap = document.getElementById('inputWrapper');
+  const textarea = document.getElementById('input');
+  if (!wrap || !textarea) return;
+
+  const lines = Math.max(1, (textarea.value || '').split('\n').length);
+  const lineHeightPx = 18 * fdScale * 2.0;
+  const padding = 16 * 2;
+  const border = 2;
+  const naturalHeight = lines * lineHeightPx + padding + border;
+
+  const MAX_AUTO = 900;
+  const MIN_H = 240;
+  const OVERFLOW_H = 640;
+
+  let h;
+  if (naturalHeight <= MAX_AUTO) {
+    h = Math.max(MIN_H, Math.ceil(naturalHeight));
+  } else {
+    h = OVERFLOW_H;
+  }
+  wrap.style.height = h + 'px';
+  wrap.style.minHeight = h + 'px';
+  textarea.style.height = (h - padding - border) + 'px';
+  textarea.style.minHeight = (h - padding - border) + 'px';
+}
+
+/* ================= 参考选择 ================= */
 function currentRef() {
+  const rule4Active = document.querySelector('#refRule4Group .ref-btn.active');
+  if (rule4Active) {
+    return { mode: 'rule4', refPos: parseInt(rule4Active.dataset.rule4pos, 10) };
+  }
+  const r12 = document.querySelector('#refRule12Group .ref-btn.active');
+  if (r12) return { mode: 'rule12', refPos: parseInt(r12.dataset.rule12pos, 10) };
+  const r22 = document.querySelector('#refRule22Group .ref-btn.active');
+  if (r22) return { mode: 'rule22', refPos: parseInt(r22.dataset.rule22pos, 10) };
   const digitActive = document.querySelector('#refDigitGroup .ref-btn.active');
   if (digitActive) return { mode: 'digit', digit: digitActive.dataset.digit };
   const posActive = document.querySelector('#refGroup .ref-btn.active');
@@ -534,6 +892,9 @@ function currentRef() {
 }
 
 function refLabel(ref) {
+  if (ref.mode === 'rule4') return `规则四(参考${ref.refPos}位)`;
+  if (ref.mode === 'rule12') return `规则一二(参考${ref.refPos}位)`;
+  if (ref.mode === 'rule22') return `规则二二(参考${ref.refPos}位)`;
   if (ref.mode === 'digit') return '参考号 ' + (ref.digit === '0' ? '10' : ref.digit);
   return refPosName(ref.pos);
 }
@@ -542,7 +903,12 @@ function persistRef() {
   try {
     const ref = currentRef();
     localStorage.setItem(REF_MODE_KEY, ref.mode);
-    localStorage.setItem(REF_VALUE_KEY, ref.mode === 'digit' ? ref.digit : String(ref.pos));
+    localStorage.setItem(REF_VALUE_KEY,
+      ref.mode === 'rule4'  ? String(ref.refPos) :
+      ref.mode === 'rule12' ? String(ref.refPos) :
+      ref.mode === 'rule22' ? String(ref.refPos) :
+      ref.mode === 'digit'  ? ref.digit :
+      ref.mode === 'pos'    ? String(ref.pos) : String(ref.k || 1));
   } catch (e) {}
 }
 
@@ -559,6 +925,14 @@ function showToast(msg) {
     el.style.opacity = '0';
     setTimeout(() => el.remove(), 300);
   }, 2600);
+}
+
+/* ================= 错误提示 ================= */
+function showError(msg) {
+  const errBox = document.getElementById('err');
+  if (!errBox) return;
+  errBox.textContent = msg;
+  errBox.classList.remove('hidden');
 }
 
 /* ================= 回测显示控制 ================= */
@@ -620,10 +994,11 @@ function renderColoredDisplay() {
   const display = document.getElementById('coloredDisplay');
   if (!textarea || !display) return;
   const text = textarea.value;
-  if (!text) { display.textContent = ''; return; }
+  if (!text) { display.textContent = ''; fitInputHeight(); return; }
   display.innerHTML = text.split('\n').map(renderColoredLine).join('\n');
   display.scrollTop = textarea.scrollTop;
   display.scrollLeft = textarea.scrollLeft;
+  fitInputHeight();
 }
 
 /* ================= 显示控制 ================= */
@@ -640,7 +1015,16 @@ function updateToggleButtonText() {
   btn.textContent = showAllRecords ? `仅显示最新${DEFAULT_DISPLAY_COUNT}期` : `显示全部`;
 }
 
-/* ================= 走势显示范围：单按钮切换 50期 / 全部 ================= */
+/* ================= 连错3追踪明细 显示控制 ================= */
+function toggleCrossDetail() {
+  showAllCrossDetails = !showAllCrossDetails;
+  document.getElementById('toggleCrossDetailBtn').textContent = showAllCrossDetails ? '仅显示前20期' : '显示全部';
+  if (fullData.length >= 2) {
+    renderCrossPosStats(fullData);
+  }
+}
+
+/* ================= 走势显示范围 ================= */
 function applyTrendLimitUI() {
   const btn = document.getElementById('trendLimitBtn');
   if (!btn) return;
@@ -660,19 +1044,26 @@ function toggleTrendLimit() {
   setTrendLimit(trendLimit === 'all' ? 50 : 'all');
 }
 
-/* ================= 走势位置切换（独立于参考位/参考号） ================= */
+/* ================= 走势位置切换 ================= */
 function applyTrendPosUI() {
   document.querySelectorAll('#trendPosGroup .trend-pos-btn').forEach(b => {
     b.classList.toggle('active', parseInt(b.dataset.pos, 10) === trendPos);
   });
+  const autoBtn = document.getElementById('trendAutoBtn');
+  if (autoBtn) autoBtn.classList.toggle('all-on', trendPosAuto);
 }
 
-function setTrendPos(pos) {
-  userSelectedTrend = true; // 用户手动选择，取消自动跟随
+function setTrendPos(pos, auto = false) {
   trendPos = parseInt(pos, 10) || 1;
   if (trendPos < 1) trendPos = 1;
   if (trendPos > 10) trendPos = 10;
-  try { localStorage.setItem(TREND_POS_KEY, String(trendPos)); } catch (e) {}
+
+  if (!auto) {
+    trendPosAuto = false;
+    try { localStorage.setItem(TREND_POS_KEY, String(trendPos)); } catch (e) {}
+    try { localStorage.setItem(TREND_POS_AUTO_KEY, 'false'); } catch (e) {}
+  }
+
   applyTrendPosUI();
   if (fullData.length >= 2) renderTrend(fullData);
 }
@@ -870,7 +1261,7 @@ function sortAsc(arr) {
   return arr;
 }
 
-/* ================= 立即获取（仅最新一期） ================= */
+/* ================= 立即获取 ================= */
 async function fetchLatest(isManual = false) {
   if (fetching) return;
   fetching = true;
@@ -885,7 +1276,6 @@ async function fetchLatest(isManual = false) {
     if (map.has(latest.issue)) {
       if (isManual) {
         fullData = sortAsc(Array.from(map.values()));
-        userSelectedTrend = false; // 手动获取，恢复跟随
         renderAll(fullData, { rewriteTextarea: true });
         setFetchStatus(`✓ 已是最新 ${latest.issue}`);
         userDirty = false;
@@ -898,7 +1288,6 @@ async function fetchLatest(isManual = false) {
     setFetchStatus(`✓ 已获取 ${latest.issue}（新增 1 期）`);
 
     const shouldRewrite = isManual || !userDirty;
-    userSelectedTrend = false; // 新数据到来，恢复跟随
     renderAll(fullData, { rewriteTextarea: shouldRewrite });
     notifyNewData();
     if (isManual) userDirty = false;
@@ -912,7 +1301,8 @@ async function fetchLatest(isManual = false) {
 
 /* ================= 拉取历史 ================= */
 async function onClickFetchHistory() {
-  const pages = parseInt(document.getElementById('historyPages')?.value, 10) || 5;
+  const raw = document.getElementById('historyPages')?.value || '2';
+  const pages = (raw === 'all') ? 'all' : parseInt(raw, 10);
   const btn = document.getElementById('btnHistory');
   if (fetching) {
     const oldText = btn ? btn.textContent : '';
@@ -932,12 +1322,15 @@ async function onClickFetchHistory() {
   await fetchHistory(pages, true);
 }
 
-async function fetchHistory(pages = 5, isManual = false) {
+async function fetchHistory(pages = 2, isManual = false) {
   if (fetching) {
     if (isManual) setFetchStatus('正在获取中，请稍候...', true);
     return;
   }
   fetching = true;
+
+  const isAll = (pages === 'all');
+  const maxPages = isAll ? 100 : pages;
 
   const btn = document.getElementById('btnHistory');
   const oldText = btn ? btn.textContent : '';
@@ -948,9 +1341,11 @@ async function fetchHistory(pages = 5, isManual = false) {
     const map = readExistingMap();
     let newCount = 0;
     let fetchedPages = 0;
+    let emptyPages = 0;
 
-    for (let p = 1; p <= pages; p++) {
-      setFetchStatus(`拉取历史中... ${p}/${pages} 页（已新增 ${newCount} 期）`);
+    for (let p = 1; p <= maxPages; p++) {
+      const totalLabel = isAll ? '全部' : `${pages}`;
+      setFetchStatus(`拉取历史中... ${p}/${totalLabel} 页（已新增 ${newCount} 期）`);
       let recs;
       try {
         recs = await fetchPageFromAPI(p, 50);
@@ -959,12 +1354,22 @@ async function fetchHistory(pages = 5, isManual = false) {
         console.warn(`第 ${p} 页失败，已保留前 ${p - 1} 页:`, pageErr);
         break;
       }
-      if (!recs.length) break;
+      if (!recs.length) {
+        if (isAll && ++emptyPages >= 2) break;
+        if (!isAll) break;
+        continue;
+      }
+      emptyPages = 0;
       fetchedPages = p;
+
+      let addedThisPage = 0;
       recs.forEach(r => {
-        if (!map.has(r.issue)) { map.set(r.issue, r); newCount++; }
+        if (!map.has(r.issue)) { map.set(r.issue, r); newCount++; addedThisPage++; }
       });
-      if (p < pages) await new Promise(r => setTimeout(r, 300));
+
+      if (isAll && addedThisPage === 0 && p > 1) break;
+
+      if (p < maxPages) await new Promise(r => setTimeout(r, 250));
     }
 
     if (!map.size) throw new Error('接口未返回任何数据（请查看 Console [API] 日志）');
@@ -980,7 +1385,6 @@ async function fetchHistory(pages = 5, isManual = false) {
       : `拉取成功：新增 ${newCount} 条，共 ${fullData.length} 期`);
 
     const shouldRewrite = isManual || !userDirty;
-    userSelectedTrend = false; // 新数据到来，恢复跟随
     renderAll(fullData, { rewriteTextarea: shouldRewrite });
     if (newCount > 0 && isManual) notifyNewData();
     if (isManual) userDirty = false;
@@ -1044,23 +1448,66 @@ function makePrediction(data, i, ref = 1) {
   const cur  = data[i];
   const prev = data[i - 1];
 
-  let refPos, refNum, selectPos;
+  // ===== 规则四 =====
+  if (ref.mode === 'rule4') {
+    const k = ref.refPos || 1;
+    const refNum = cur.nums[k - 1];
+    const d = posFromDigit(refNum);
+    const v = cur.nums[d - 1];
+    const betPositions = [];
+    for (let offset = 0; offset < 5; offset++) {
+      betPositions.push(((d - 1 + offset) % 10) + 1);
+    }
+    return {
+      selectIssue: cur.issue, prevIssue: prev.issue,
+      refPos: k, refNum,
+      selectPos: d, selectNum: v,
+      betPositions, betNums: v,
+      prevSame: prev.nums[d - 1],
+      betPos: d, mode: 'rule4'
+    };
+  }
+
+  // ===== 规则一二 / 规则二二 =====
+  // 参考规则一流程得到选中号 selectNum，用 BET_MAP_5 查 5 位投注号码，投注位沿用规则一的 betPos
+  if (ref.mode === 'rule12' || ref.mode === 'rule22') {
+    const k = ref.refPos || 1;
+    const refNum = cur.nums[k - 1];          // 本期第 k 位
+    const d = posFromDigit(refNum);          // 选中位 selectPos
+    const v = cur.nums[d - 1];               // 选中号 selectNum
+    const betNums = BET_MAP_5[v];            // 5 位投注号码
+    const prevSame = prev.nums[d - 1];
+    const betPos = posFromDigit(prevSame);
+    return {
+      selectIssue: cur.issue, prevIssue: prev.issue,
+      refPos: k, refNum,
+      selectPos: d, selectNum: v,
+      betPositions: [betPos],
+      betNums,
+      prevSame, betPos,
+      mode: ref.mode
+    };
+  }
+
+  let refPos, refNum, selectPos, selectNum;
 
   if (ref.mode === 'digit') {
     refNum = ref.digit;
     const idx = cur.nums.indexOf(ref.digit);
     selectPos = idx >= 0 ? idx + 1 : 1;
     refPos = selectPos;
+    selectNum = cur.nums[selectPos - 1];
   } else {
     refPos = ref.pos;
     refNum = cur.nums[refPos - 1];
     selectPos = posFromDigit(refNum);
+    selectNum = cur.nums[selectPos - 1];
   }
 
-  const selectNum = cur.nums[selectPos - 1];
-  const betNums   = BET_MAP[selectNum];
-  const prevSame  = prev.nums[selectPos - 1];
-  const betPos    = posFromDigit(prevSame);
+  const betNums = BET_MAP[selectNum];
+
+  const prevSame = prev.nums[selectPos - 1];
+  const betPos = posFromDigit(prevSame);
 
   return {
     selectIssue: cur.issue, prevIssue: prev.issue,
@@ -1069,6 +1516,35 @@ function makePrediction(data, i, ref = 1) {
   };
 }
 
+/* ================= 规则四辅助函数 ================= */
+function getBetPositions(p) {
+  return p.betPositions || [p.betPos];
+}
+
+function isPredictionHit(p, next) {
+  const positions = getBetPositions(p);
+  return positions.some(pos => p.betNums.includes(next.nums[pos - 1]));
+}
+
+function formatBetPositions(p) {
+  const positions = getBetPositions(p);
+  if (!positions.length) return '—';
+  if (positions.length === 1) return '第' + positions[0] + '位';
+  const isContiguous = positions.every((pos, idx) => {
+    if (idx === 0) return true;
+    const prev = positions[idx - 1];
+    return pos === (prev === 10 ? 1 : prev + 1);
+  });
+  if (isContiguous) {
+    if (positions[positions.length - 1] < positions[0]) {
+      return '第' + positions[0] + '-' + positions[positions.length - 1] + '位（循环）';
+    }
+    return '第' + positions[0] + '-' + positions[positions.length - 1] + '位';
+  }
+  return '第' + positions.join('/') + '位';
+}
+
+/* ================= 命中周期 ================= */
 function computeHitCycles(data, n, ref) {
   const rows = [];
   if (data.length < 3) return rows;
@@ -1076,16 +1552,32 @@ function computeHitCycles(data, n, ref) {
 
   for (let start = startFrom; start <= data.length - 2; start++) {
     const firstPred = makePrediction(data, start, ref);
-    const fixedBetPos  = firstPred.betPos;
+    const fixedPositions = getBetPositions(firstPred);
     const fixedBetNums = firstPred.betNums;
     let cycles = 0, hit = false, hitRecord = null, lastRecord = null;
 
     for (let i = start; i <= data.length - 2; i++) {
       const next = data[i + 1];
-      const actual = next.nums[fixedBetPos - 1];
-      const isHit = fixedBetNums.includes(actual);
+      const isHit = fixedPositions.some(pos => fixedBetNums.includes(next.nums[pos - 1]));
       cycles++;
-      lastRecord = { nextIssue: next.issue, betPos: fixedBetPos, betNums: fixedBetNums, actual };
+
+      let actualPos, actualVal;
+      if (isHit) {
+        actualPos = fixedPositions.find(pos => fixedBetNums.includes(next.nums[pos - 1]));
+        actualVal = next.nums[actualPos - 1];
+      } else {
+        actualPos = fixedPositions[0];
+        actualVal = next.nums[actualPos - 1];
+      }
+
+      lastRecord = {
+        nextIssue: next.issue,
+        betPositions: fixedPositions,
+        betPos: fixedPositions[0],
+        betNums: fixedBetNums,
+        actual: actualVal,
+        actualPos
+      };
       if (isHit) { hit = true; hitRecord = { ...lastRecord }; break; }
     }
 
@@ -1102,13 +1594,14 @@ function computeHitCycles(data, n, ref) {
   if (liveStart >= 1) {
     const livePred = makePrediction(data, liveStart, ref);
     const nextIssue = nextIssueOf(data[liveStart].issue);
+    const positions = getBetPositions(livePred);
     rows.push({
       startIssue: data[liveStart].issue,
       firstBetIssue: nextIssue,
       cycles: 0, hit: false, pending: true,
       hitRecord: null,
       lastRecord: {
-        nextIssue, betPos: livePred.betPos,
+        nextIssue, betPositions: positions, betPos: positions[0],
         betNums: livePred.betNums, actual: '—'
       },
       maxAvailable: 0
@@ -1130,8 +1623,7 @@ function computeCurrentStreak(data, ref) {
   for (let i = data.length - 2; i >= 1; i--) {
     const p = makePrediction(data, i, ref);
     const next = data[i + 1];
-    const actual = next.nums[p.betPos - 1];
-    const isHit = p.betNums.includes(actual);
+    const isHit = isPredictionHit(p, next);
     if (lastHit === null) { lastHit = isHit; streak = 1; }
     else if (isHit === lastHit) streak++;
     else break;
@@ -1156,14 +1648,342 @@ function updateRefStreaks(data) {
   document.querySelectorAll('#refGroup .ref-btn').forEach(btn =>
     applyStreak(btn, { mode: 'pos', pos: parseInt(btn.dataset.pos, 10) }));
 
+  document.querySelectorAll('#refRule12Group .ref-btn').forEach(btn =>
+    applyStreak(btn, { mode: 'rule12', refPos: parseInt(btn.dataset.rule12pos, 10) }));
+
+  document.querySelectorAll('#refRule22Group .ref-btn').forEach(btn =>
+    applyStreak(btn, { mode: 'rule22', refPos: parseInt(btn.dataset.rule22pos, 10) }));
+
   document.querySelectorAll('#refDigitGroup .ref-btn').forEach(btn =>
     applyStreak(btn, { mode: 'digit', digit: btn.dataset.digit }));
+
+  document.querySelectorAll('#refRule4Group .ref-btn').forEach(btn =>
+    applyStreak(btn, { mode: 'rule4', refPos: parseInt(btn.dataset.rule4pos, 10) }));
 }
 
-/* ================= 渲染：大小走势 =================
- * 走势位置由 trendPos（1-10）控制，默认跟随投注位变动。
- */
+/* ================= 连错3追踪统计（支持规则一/一二/二二/二/四） ================= */
+function getCrossFilteredData(data) {
+  if (!data || !data.length) return data;
+  let startIdx = 0;
+  let endIdx = data.length - 1;
+
+  if (crossRangeStart) {
+    const idx = data.findIndex(r => r.issue >= crossRangeStart);
+    if (idx !== -1) startIdx = idx;
+  }
+  if (crossRangeEnd) {
+    for (let i = data.length - 1; i >= 0; i--) {
+      if (data[i].issue <= crossRangeEnd) {
+        endIdx = i;
+        break;
+      }
+    }
+  }
+
+  if (startIdx > endIdx) return [];
+  return data.slice(startIdx, endIdx + 1);
+}
+
+function applyCrossRange() {
+  crossRangeStart = document.getElementById('crossStartIssue').value.trim();
+  crossRangeEnd = document.getElementById('crossEndIssue').value.trim();
+  if (fullData.length >= 2) {
+    renderCrossPosStats(fullData);
+  }
+}
+
+function resetCrossRange() {
+  document.getElementById('crossStartIssue').value = '';
+  document.getElementById('crossEndIssue').value = '';
+  crossRangeStart = '';
+  crossRangeEnd = '';
+  if (fullData.length >= 2) {
+    renderCrossPosStats(fullData);
+  }
+}
+
+function computeCrossPosStats(data, refMode) {
+  if (data.length < 5) return { summary: [], details: [] };
+  const summary = [];
+  const details = [];
+
+  const seq = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+  for (let idx = 0; idx < seq.length; idx++) {
+    const k = seq[idx];
+    const nextK = k === 10 ? 1 : k + 1;
+
+    let refK, refNextK, labelK, labelNextK;
+
+    if (refMode === 'pos') {
+      refK = { mode: 'pos', pos: k };
+      refNextK = { mode: 'pos', pos: nextK };
+      labelK = '第' + CN[k-1] + '位';
+      labelNextK = '第' + CN[nextK-1] + '位';
+    } else if (refMode === 'digit') {
+      const digitK = k === 10 ? '0' : String(k);
+      const digitNextK = nextK === 10 ? '0' : String(nextK);
+      refK = { mode: 'digit', digit: digitK };
+      refNextK = { mode: 'digit', digit: digitNextK };
+      labelK = '参考号 ' + k;
+      labelNextK = '参考号 ' + nextK;
+    } else if (refMode === 'rule4') {
+      refK = { mode: 'rule4', refPos: k };
+      refNextK = { mode: 'rule4', refPos: k };
+      labelK = '参考第' + CN[k-1] + '位';
+      labelNextK = '参考第' + CN[k-1] + '位';
+    } else if (refMode === 'rule12' || refMode === 'rule22') {
+      refK = { mode: refMode, refPos: k };
+      refNextK = { mode: refMode, refPos: k };
+      labelK = '参考第' + CN[k-1] + '位';
+      labelNextK = '参考第' + CN[k-1] + '位';
+    } else {
+      // 兜底按规则一处理
+      refK = { mode: 'pos', pos: k };
+      refNextK = { mode: 'pos', pos: nextK };
+      labelK = '第' + CN[k-1] + '位';
+      labelNextK = '第' + CN[nextK-1] + '位';
+    }
+
+    const kHits = [];
+    for (let i = 1; i < data.length - 1; i++) {
+      const p = makePrediction(data, i, refK);
+      const next = data[i + 1];
+      kHits.push({
+        index: i,
+        issue: data[i].issue,
+        isHit: isPredictionHit(p, next)
+      });
+    }
+
+    const triggers = [];
+    let missStreak = 0;
+    for (let i = 0; i < kHits.length; i++) {
+      if (!kHits[i].isHit) {
+        missStreak++;
+        if (missStreak === 3) {
+          triggers.push({
+            index: kHits[i].index,
+            issue: kHits[i].issue,
+            nextIssue: data[kHits[i].index + 1].issue
+          });
+        }
+      } else {
+        missStreak = 0;
+      }
+    }
+
+    let hitCount = 0;
+    let missCount = 0;
+    let pendingCount = 0;
+    const cycles = [];
+
+    triggers.forEach(trig => {
+      let cycle = 0;
+      let hit = false;
+      let finalBetNums = '—';
+      let finalBetPositions = [];
+      let isPending = false;
+
+      for (let j = trig.index + 1; j <= data.length - 2; j++) {
+        cycle++;
+        const p = makePrediction(data, j, refNextK);
+        const next = data[j + 1];
+        finalBetNums = p.betNums;
+        finalBetPositions = getBetPositions(p);
+
+        if (isPredictionHit(p, next)) {
+          hit = true;
+          hitCount++;
+          cycles.push(cycle);
+          break;
+        }
+      }
+
+      if (!hit) {
+        if (trig.index + 1 <= data.length - 1) {
+          pendingCount++;
+          isPending = true;
+
+          const p = makePrediction(data, data.length - 1, refNextK);
+          finalBetNums = p.betNums;
+          finalBetPositions = getBetPositions(p);
+          cycle = data.length - 1 - (trig.index + 1);
+        } else {
+          missCount++;
+        }
+      }
+
+      details.push({
+        labelK: labelK,
+        triggerIssue: trig.issue,
+        labelNextK: labelNextK,
+        startIssue: trig.nextIssue,
+        cycle: cycle,
+        finalBetPositions: finalBetPositions,
+        finalBetPos: finalBetPositions[0],
+        finalBetNums: finalBetNums,
+        status: hit ? 'hit' : (isPending ? 'pending' : 'miss')
+      });
+    });
+
+    const totalTriggers = triggers.length;
+    const avg = cycles.length ? cycles.reduce((a,b)=>a+b,0)/cycles.length : null;
+    const minC = cycles.length ? Math.min(...cycles) : null;
+    const maxC = cycles.length ? Math.max(...cycles) : null;
+    const rate = totalTriggers ? hitCount / totalTriggers : 0;
+
+    summary.push({
+      labelK: labelK,
+      labelNextK: labelNextK,
+      totalTriggers,
+      hitCount,
+      missCount,
+      pendingCount,
+      avg,
+      minC,
+      maxC,
+      rate
+    });
+  }
+  return { summary, details };
+}
+
+function renderCrossPosStats(data) {
+  const summaryBox = document.getElementById('crossPosStatsBox');
+  const summaryBody = document.getElementById('crossPosStatsBody');
+  const detailBox = document.getElementById('crossPosDetailBox');
+  const detailBody = document.getElementById('crossPosDetailBody');
+  if (!summaryBox || !summaryBody || !detailBox || !detailBody) return;
+
+  const ref = currentRef();
+  const validModes = ['pos', 'digit', 'rule4', 'rule12', 'rule22'];
+  if (!crossRuleMode || !validModes.includes(crossRuleMode)) {
+    crossRuleMode = validModes.includes(ref.mode) ? ref.mode : 'pos';
+  }
+
+  const ruleSelect = document.getElementById('crossRuleSelect');
+  if (ruleSelect && ruleSelect.value !== crossRuleMode) {
+    ruleSelect.value = crossRuleMode;
+  }
+
+  const startInput = document.getElementById('crossStartIssue');
+  const endInput = document.getElementById('crossEndIssue');
+  if (startInput && endInput && data && data.length > 0) {
+    startInput.placeholder = data[0].issue;
+    endInput.placeholder = data[data.length - 1].issue;
+  }
+
+  let filteredData = data;
+  if (crossRangeStart || crossRangeEnd) {
+    filteredData = getCrossFilteredData(data);
+  }
+
+  if (!filteredData || filteredData.length < 5) {
+    summaryBox.classList.add('hidden');
+    detailBox.classList.add('hidden');
+    return;
+  }
+
+  const { summary, details } = computeCrossPosStats(filteredData, crossRuleMode);
+
+  const activeSummary = summary.filter(r => r.totalTriggers > 0);
+  if (!activeSummary.length) {
+    summaryBox.classList.add('hidden');
+    detailBox.classList.add('hidden');
+    return;
+  }
+
+  summaryBody.innerHTML = '';
+  activeSummary.forEach(r => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><b>${r.labelK}</b></td>
+      <td>${r.labelNextK}</td>
+      <td>${r.totalTriggers}</td>
+      <td class="hl" style="color:#059669;">${r.hitCount}</td>
+      <td style="color:#dc2626;">${r.missCount}</td>
+      <td style="color:#d97706;">${r.pendingCount}</td>
+      <td>${r.avg !== null ? r.avg.toFixed(2) : '—'}</td>
+      <td>${r.minC !== null ? r.minC + ' 期' : '—'}</td>
+      <td>${r.maxC !== null ? r.maxC + ' 期' : '—'}</td>
+      <td>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="font-weight:bold;">${(r.rate * 100).toFixed(1)}%</span>
+          <div class="bar" style="margin:0;flex:1;height:6px;min-width:50px;"><i style="width:${(r.rate * 100).toFixed(1)}%;"></i></div>
+        </div>
+      </td>
+    `;
+    summaryBody.appendChild(tr);
+  });
+  setPanelShown(summaryBox, 'crossStats');
+
+  details.sort((a, b) => {
+    if (a.triggerIssue.length !== b.triggerIssue.length) return b.triggerIssue.length - a.triggerIssue.length;
+    return a.triggerIssue < b.triggerIssue ? 1 : a.triggerIssue > b.triggerIssue ? -1 : 0;
+  });
+
+  const btn = document.getElementById('toggleCrossDetailBtn');
+  if (btn) {
+    if (details.length <= DEFAULT_CROSS_DETAIL_COUNT) {
+      btn.style.display = 'none';
+    } else {
+      btn.style.display = 'inline-block';
+      btn.textContent = showAllCrossDetails ? '仅显示前20期' : '显示全部';
+    }
+  }
+
+  const displayDetails = showAllCrossDetails ? details : details.slice(0, DEFAULT_CROSS_DETAIL_COUNT);
+
+  detailBody.innerHTML = '';
+  displayDetails.forEach(d => {
+    const tr = document.createElement('tr');
+    if (d.status === 'pending') tr.className = 'row-pending';
+    else if (d.status === 'miss') tr.className = 'row-miss';
+    else if (d.cycle === 1) tr.className = 'row-hit';
+
+    let cycleCell, statusTag;
+    if (d.status === 'hit') {
+      cycleCell = `<span class="hl">${d.cycle} 期</span>`;
+      statusTag = d.cycle === 1 ? '<span class="tag tag-fast">即中</span>' : '<span class="tag tag-hit">命中</span>';
+    } else if (d.status === 'pending') {
+      cycleCell = d.cycle > 0 ? `已投 ${d.cycle} 期` : '—';
+      statusTag = '<span class="tag tag-pending">待定</span>';
+    } else {
+      cycleCell = `已投 ${d.cycle} 期`;
+      statusTag = '<span class="tag tag-miss">未命中</span>';
+    }
+
+    tr.innerHTML = `
+      <td>${d.labelK}</td>
+      <td>${d.triggerIssue}</td>
+      <td>${d.labelNextK}</td>
+      <td>${d.startIssue}</td>
+      <td>${cycleCell}</td>
+      <td class="hl">${formatBetPositions({ betPositions: d.finalBetPositions, betPos: d.finalBetPos })} ${d.finalBetNums}</td>
+      <td>${statusTag}</td>
+    `;
+    detailBody.appendChild(tr);
+  });
+  setPanelShown(detailBox, 'crossDetail');
+}
+
+/* ================= 渲染：大小走势 ================= */
 function renderTrend(data) {
+  if (trendPosAuto && data && data.length >= 2) {
+    try {
+      const ref = currentRef();
+      const lastIdx = data.length - 1;
+      const pred = makePrediction(data, lastIdx, ref);
+      if (pred && pred.betPos >= 1 && pred.betPos <= 10) {
+        const changed = (pred.betPos !== trendPos);
+        trendPos = pred.betPos;
+        applyTrendPosUI();
+        if (changed) console.log(`[趋势] 自动跟随投注位 → 第${trendPos}位`);
+      }
+    } catch (e) { /* 忽略 */ }
+  }
+
   const card = document.getElementById('trendBox');
   const cols = document.getElementById('trendCols');
   if (!card || !cols) return;
@@ -1175,12 +1995,10 @@ function renderTrend(data) {
 
   const posIdx = trendPos - 1;
 
-  // 按显示范围截取（最新一期在最右，取末尾 N 期）
   const source = (trendLimit === 'all' || !Number.isFinite(trendLimit))
     ? data
     : data.slice(Math.max(0, data.length - trendLimit));
 
-  // 把每期归类并合并连续相同大小
   const groups = [];
   for (let i = 0; i < source.length; i++) {
     const raw = source[i].nums[posIdx];
@@ -1191,7 +2009,6 @@ function renderTrend(data) {
     else groups.push({ type, count: 1 });
   }
 
-  // 渲染成列
   const html = groups.map(g => {
     const label = g.type === 'big' ? '大' : '小';
     let inner = '';
@@ -1203,7 +2020,6 @@ function renderTrend(data) {
   cols.innerHTML = html;
   card.classList.remove('hidden');
 
-  // 滚动到最右端（最新一期）
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
       const sc = document.getElementById('trendScroll');
@@ -1227,7 +2043,7 @@ function renderHitCycles(data, n, ref) {
   tbody.innerHTML = ''; statsEl.innerHTML = ''; distRows.innerHTML = '';
 
   if (!rows.length) { box.classList.add('hidden'); return; }
-  box.classList.remove('hidden');
+  setPanelShown(box, 'cycle');
 
   const pendingRows = rows.filter(r => r.pending);
   const hitRows = rows.filter(r => r.hit && !r.pending);
@@ -1315,7 +2131,7 @@ function renderHitCycles(data, n, ref) {
       <td>${r.firstBetIssue}</td>
       <td>${cycleCell}</td>
       <td>${hitIssueCell}</td>
-      <td>${rec ? '第' + rec.betPos + '位' : '—'}</td>
+      <td>${rec ? formatBetPositions(rec) : '—'}</td>
       <td class="hl">${rec ? rec.betNums : '—'}</td>
       <td>${rec ? rec.actual : '—'}</td>
       <td>${statusTag}</td>
@@ -1338,16 +2154,28 @@ function renderBacktest(data, ref) {
   const btDistRows = document.getElementById('btDistRows');
   tbody.innerHTML = ''; btDistRows.innerHTML = '';
   document.getElementById('thRef').textContent =
-    ref.mode === 'digit' ? '参考号' : refPosName(ref.pos) + '号码';
+    ref.mode === 'rule4' ? `参考第${ref.refPos}位` :
+    ref.mode === 'rule12' ? `参考第${ref.refPos}位` :
+    ref.mode === 'rule22' ? `参考第${ref.refPos}位` :
+    ref.mode === 'digit' ? '参考号' :
+    refPosName(ref.pos) + '号码';
   document.getElementById('sumRef').textContent = refLabel(ref);
 
   const rowsData = [];
   for (let i = 1; i < data.length - 1; i++) {
     const p = makePrediction(data, i, ref);
     const next = data[i + 1];
-    const actual = next.nums[p.betPos - 1];
-    const isHit = p.betNums.includes(actual);
-    rowsData.push({ p, next, actual, isHit });
+    const isHit = isPredictionHit(p, next);
+    let actual, actualPos;
+    const positions = getBetPositions(p);
+    if (isHit) {
+      actualPos = positions.find(pos => p.betNums.includes(next.nums[pos - 1]));
+      actual = next.nums[actualPos - 1];
+    } else {
+      actualPos = positions[0];
+      actual = next.nums[actualPos - 1];
+    }
+    rowsData.push({ p, next, actual, actualPos, isHit });
   }
 
   const missStreaks = [];
@@ -1386,7 +2214,7 @@ function renderBacktest(data, ref) {
       <td class="hl">${p.betNums}</td>
       <td>${p.prevSame}</td>
       <td>${next.issue}</td>
-      <td>第${p.betPos}位</td>
+      <td>${formatBetPositions(p)}</td>
       <td>${actual}</td>
       <td>${isHit ? '<span class="tag tag-hit">命中</span>' : (highlight ? '<span class="tag tag-streak">连错</span>' : '<span class="tag tag-miss">未命中</span>')}</td>
     `;
@@ -1465,8 +2293,13 @@ function renderNextPrediction(data, ref) {
   `;
 
   document.getElementById('pIssue').textContent = nextIssue;
-  document.getElementById('pPos').innerHTML =
-    `投注第 <span class="p-pos-num">${pred.betPos}</span> 位`;
+  if (pred.betPositions && pred.betPositions.length > 1) {
+    document.getElementById('pPos').innerHTML =
+      `投注第 <span class="p-pos-num">${pred.betPositions.join('/')}</span> 位`;
+  } else {
+    document.getElementById('pPos').innerHTML =
+      `投注第 <span class="p-pos-num">${pred.betPos}</span> 位`;
+  }
   document.getElementById('pNums').textContent = pred.betNums;
 }
 
@@ -1505,19 +2338,10 @@ function renderAll(data, options = {}) {
   if (n > 500) n = 500;
   const ref = currentRef();
 
-  // ===== 大小走势默认跟随投注位变动 =====
-  const lastIdx = data.length - 1;
-  if (lastIdx >= 1) {
-    const pred = makePrediction(data, lastIdx, ref);
-    if (pred && pred.betPos && !userSelectedTrend) {
-      trendPos = pred.betPos;
-      applyTrendPosUI();
-    }
-  }
-
   updateRefStreaks(data);
   renderTrend(data);
   renderNextPrediction(data, ref);
+  renderCrossPosStats(data);
   renderHitCycles(data, n, ref);
   if (showBacktest) renderBacktest(data, ref);
   if (rewriteTextarea) rewriteTextareaDesc(data);
@@ -1526,7 +2350,6 @@ function renderAll(data, options = {}) {
 
 /* ================= 主流程 ================= */
 function run() {
-  userSelectedTrend = false; // 点击开始分析，恢复跟随
   const errBox = document.getElementById('err');
   errBox.classList.add('hidden');
   syncTextareaEdits();
@@ -1538,279 +2361,342 @@ function run() {
     return;
   }
   renderAll(data);
-  rewriteTextareaDesc(data);
-}
-
-function showError(msg) {
-  const errBox = document.getElementById('err');
-  errBox.textContent = msg;
-  errBox.classList.remove('hidden');
-}
-
-function fillDemo() {
-  const textarea = document.getElementById('input');
-  const demoText =
-`34170145  1  2  3  4  5  6  7  8  9  0
-34170144  4  5  3  8  6  7  0  2  9  1
-34170143  4  9  3  8  6  7  0  2  1  5
-34170142  0  3  9  8  7  6  4  2  1  5
-34170141  0  5  9  6  7  3  8  2  1  4`;
-  textarea.value = demoText;
-  fullData = parseData(demoText);
-  document.getElementById('windowSize').value = 20;
-  userDirty = true;
-  userSelectedTrend = false; // 填充示例数据，恢复跟随
   persistFullData();
-  run();
+  showToast('分析完成');
+}
+
+/* ================= 填充示例 / 清空 ================= */
+function fillDemo() {
+  const lines = [];
+  let issueBase = 34139600;
+  for (let i = 0; i < 60; i++) {
+    const nums = Array.from({ length: 10 }, () => Math.floor(Math.random() * 10)).join('');
+    lines.push(String(issueBase + i) + ' ' + nums);
+  }
+  fullData = parseData(lines.join('\n'));
+  persistFullData();
+  document.getElementById('err').classList.add('hidden');
+  renderAll(fullData, { rewriteTextarea: true });
+  showToast('已填充 ' + fullData.length + ' 期示例数据');
 }
 
 function clearAll() {
-  const textarea = document.getElementById('input');
-  textarea.value = '';
+  if (!confirm('确定清空所有数据吗？（备注不会被清空）')) return;
   fullData = [];
-  userDirty = false;
-  userSelectedTrend = false; // 清空后恢复跟随
+  document.getElementById('input').value = '';
   try { localStorage.removeItem(LS_KEY); } catch (e) {}
+  renderColoredDisplay();
+
   document.getElementById('err').classList.add('hidden');
   document.getElementById('pLatest').classList.add('hidden');
   document.getElementById('pMain').classList.add('hidden');
   document.getElementById('cycleBox').classList.add('hidden');
+  document.getElementById('crossPosStatsBox').classList.add('hidden');
+  document.getElementById('crossPosDetailBox').classList.add('hidden');
   document.getElementById('trendBox').classList.add('hidden');
-  document.getElementById('tbody').innerHTML = '';
-  document.getElementById('cycleBody').innerHTML = '';
-  document.getElementById('trendCols').innerHTML = '';
+  document.getElementById('backtestWrapper').classList.add('hidden');
   updateRefStreaks(null);
-  applyBacktestVisibility();
-  renderColoredDisplay();
-  textarea.focus();
+  showToast('已清空数据');
 }
 
-/* ================= 初始化 ================= */
-window.addEventListener('DOMContentLoaded', () => {
-  const textarea = document.getElementById('input');
-  const display = document.getElementById('coloredDisplay');
+/* ================= 事件绑定 ================= */
+function bindRefGroupClear(groupSelector) {
+  document.querySelectorAll('#refGroup .ref-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('#refRule12Group .ref-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('#refRule22Group .ref-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('#refDigitGroup .ref-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('#refRule4Group .ref-btn').forEach(b => b.classList.remove('active'));
+}
 
-  const soundChk = document.getElementById('soundEnabled');
-  if (soundChk) {
-    try {
-      const saved = localStorage.getItem(SOUND_KEY);
-      if (saved === 'false') soundChk.checked = false;
-    } catch (e) {}
-    soundChk.addEventListener('change', function () {
-      try { localStorage.setItem(SOUND_KEY, this.checked ? 'true' : 'false'); } catch (e) {}
+function onRefChanged() {
+  persistRef();
+  if (fullData.length >= 2) renderAll(fullData);
+}
+
+function bindEvents() {
+  // 字号
+  document.querySelectorAll('#fdSizeGroup .fd-size-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      fdScale = parseFloat(btn.dataset.scale);
+      try { localStorage.setItem(FD_SIZE_KEY, String(fdScale)); } catch (e) {}
+      applyFdScale();
     });
-  }
+  });
 
-  try {
-    const saved = localStorage.getItem(DISPLAY_COUNT_KEY);
-    if (saved === 'true') showAllRecords = true;
-  } catch (e) {}
-  updateToggleButtonText();
+  // 规则一
+  document.querySelectorAll('#refGroup .ref-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      bindRefGroupClear();
+      btn.classList.add('active');
+      onRefChanged();
+    });
+  });
 
-  try {
-    const saved = localStorage.getItem(BACKTEST_KEY);
-    if (saved === 'true') showBacktest = true;
-  } catch (e) {}
-  applyBacktestVisibility();
+  // 规则一二
+  document.querySelectorAll('#refRule12Group .ref-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      bindRefGroupClear();
+      btn.classList.add('active');
+      onRefChanged();
+    });
+  });
 
-  /* 恢复走势显示范围 */
-  try {
-    const saved = localStorage.getItem(TREND_LIMIT_KEY);
-    if (saved === 'all') {
-      trendLimit = 'all';
-    } else if (saved) {
-      const n = parseInt(saved, 10);
-      if (Number.isFinite(n) && n > 0) trendLimit = n;
-    }
-  } catch (e) {}
-  applyTrendLimitUI();
+  // 规则二二
+  document.querySelectorAll('#refRule22Group .ref-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      bindRefGroupClear();
+      btn.classList.add('active');
+      onRefChanged();
+    });
+  });
 
-  /* 走势范围切换按钮（单按钮） */
+  // 规则二
+  document.querySelectorAll('#refDigitGroup .ref-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      bindRefGroupClear();
+      btn.classList.add('active');
+      onRefChanged();
+    });
+  });
+
+  // 规则四
+  document.querySelectorAll('#refRule4Group .ref-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      bindRefGroupClear();
+      btn.classList.add('active');
+      onRefChanged();
+    });
+  });
+
+  // 走势位置
+  document.querySelectorAll('#trendPosGroup .trend-pos-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      setTrendPos(parseInt(btn.dataset.pos, 10), false);
+    });
+  });
+
+  // 走势限制
   const trendLimitBtn = document.getElementById('trendLimitBtn');
-  if (trendLimitBtn) {
-    trendLimitBtn.addEventListener('click', toggleTrendLimit);
-  }
+  if (trendLimitBtn) trendLimitBtn.addEventListener('click', toggleTrendLimit);
 
-  /* 恢复走势位置（独立状态，但默认跟随投注位） */
-  try {
-    const saved = localStorage.getItem(TREND_POS_KEY);
-    if (saved) {
-      const n = parseInt(saved, 10);
-      if (Number.isFinite(n) && n >= 1 && n <= 10) trendPos = n;
-    }
-  } catch (e) {}
-  applyTrendPosUI();
-
-  /* 走势位置按钮事件 */
-  const trendPosGroup = document.getElementById('trendPosGroup');
-  if (trendPosGroup) {
-    trendPosGroup.addEventListener('click', (e) => {
-      const btn = e.target.closest('.trend-pos-btn');
-      if (!btn) return;
-      setTrendPos(btn.dataset.pos);
+  // 走势自动跟随
+  const trendAutoBtn = document.getElementById('trendAutoBtn');
+  if (trendAutoBtn) {
+    trendAutoBtn.addEventListener('click', () => {
+      trendPosAuto = !trendPosAuto;
+      try { localStorage.setItem(TREND_POS_AUTO_KEY, trendPosAuto ? 'true' : 'false'); } catch (e) {}
+      applyTrendPosUI();
+      if (fullData.length >= 2) renderTrend(fullData);
     });
   }
 
-  const historyPagesSel = document.getElementById('historyPages');
-  if (historyPagesSel) {
-    try {
-      const saved = localStorage.getItem(HISTORY_PAGES_KEY);
-      if (saved && historyPagesSel.querySelector(`option[value="${saved}"]`)) {
-        historyPagesSel.value = saved;
-      }
-    } catch (e) {}
-    historyPagesSel.addEventListener('change', function () {
-      try { localStorage.setItem(HISTORY_PAGES_KEY, this.value); } catch (e) {}
+  // 连错3规则切换
+  const crossRuleSel = document.getElementById('crossRuleSelect');
+  if (crossRuleSel) {
+    crossRuleSel.addEventListener('change', e => {
+      crossRuleMode = e.target.value;
+      if (fullData.length >= 2) renderCrossPosStats(fullData);
     });
   }
 
-  /* 恢复上次的参考选择（位 / 号） */
-  try {
-    const savedMode = localStorage.getItem(REF_MODE_KEY);
-    const savedValue = localStorage.getItem(REF_VALUE_KEY);
-    if (savedMode === 'digit' && savedValue !== null) {
-      const btn = document.querySelector(`#refDigitGroup .ref-btn[data-digit="${savedValue}"]`);
-      if (btn) {
-        document.querySelectorAll('#refGroup .ref-btn').forEach(b => b.classList.remove('active'));
-        document.querySelectorAll('#refDigitGroup .ref-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-      }
-    } else if (savedMode === 'pos' && savedValue !== null) {
-      const btn = document.querySelector(`#refGroup .ref-btn[data-pos="${savedValue}"]`);
-      if (btn) {
-        document.querySelectorAll('#refGroup .ref-btn').forEach(b => b.classList.remove('active'));
-        document.querySelectorAll('#refDigitGroup .ref-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-      }
-    }
-  } catch (e) {}
-
-  const unlockAudio = () => {
-    try {
-      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      if (audioCtx.state === 'suspended') audioCtx.resume().catch(() => {});
-    } catch (e) {}
-    document.removeEventListener('click', unlockAudio);
-    document.removeEventListener('touchstart', unlockAudio);
-    document.removeEventListener('keydown', unlockAudio);
-  };
-  document.addEventListener('click', unlockAudio);
-  document.addEventListener('touchstart', unlockAudio);
-  document.addEventListener('keydown', unlockAudio);
-
-  try {
-    const saved = localStorage.getItem(LS_KEY);
-    if (saved) {
-      fullData = parseData(saved);
-      textarea.value = saved;
-      if (fullData.length >= 2) {
-        userSelectedTrend = false; // 恢复数据时，允许跟随
-        renderAll(fullData);
-        rewriteTextareaDesc(fullData);
-      } else if (fullData.length === 1) {
-        textarea.value = fullData[0].issue + SEPARATOR
-                       + fullData[0].nums.split('').join(NUM_SEPARATOR);
-        renderColoredDisplay();
-      }
-    }
-  } catch (e) {}
-
-  textarea.addEventListener('input', () => {
-    userDirty = true;
-    renderColoredDisplay();
-    syncTextareaEdits();
-    clearTimeout(saveTimer);
-    saveTimer = setTimeout(() => persistFullData(), 400);
-  });
-
-  textarea.addEventListener('blur', () => {
-    const raw = textarea.value;
-    if (!raw) return;
-    const lines = raw.split('\n').map(line => {
-      const trimmed = line.trim();
-      if (!trimmed) return line;
-      const parts = trimmed.split(/\s+/);
-      if (parts.length < 2) return line;
-      const issue = parts[0].replace(/\D/g, '');
-      const nums = parts.slice(1).join('').replace(/\D/g, '');
-      if (issue && nums.length === 10) {
-        return issue + SEPARATOR + nums.split('').join(NUM_SEPARATOR);
-      }
-      return line;
-    });
-    const formatted = lines.join('\n');
-    if (formatted !== raw) {
-      textarea.value = formatted;
-      renderColoredDisplay();
-      syncTextareaEdits();
-      persistFullData();
-    }
-  });
-
-  textarea.addEventListener('scroll', () => {
-    if (display) {
-      display.scrollTop = textarea.scrollTop;
-      display.scrollLeft = textarea.scrollLeft;
-    }
-  });
-
-  const refGroup = document.getElementById('refGroup');
-  if (refGroup) {
-    refGroup.addEventListener('click', (e) => {
-      const btn = e.target.closest('.ref-btn');
-      if (!btn) return;
-      document.querySelectorAll('#refDigitGroup .ref-btn').forEach(b => b.classList.remove('active'));
-      refGroup.querySelectorAll('.ref-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      persistRef();
-      if (fullData.length >= 2) run();
+  // 备注
+  const noteInput = document.getElementById('noteInput');
+  if (noteInput) {
+    noteInput.addEventListener('input', () => {
+      try { localStorage.setItem(NOTE_KEY, noteInput.value); } catch (e) {}
     });
   }
 
-  const refDigitGroup = document.getElementById('refDigitGroup');
-  if (refDigitGroup) {
-    refDigitGroup.addEventListener('click', (e) => {
-      const btn = e.target.closest('.ref-btn');
-      if (!btn) return;
-      document.querySelectorAll('#refGroup .ref-btn').forEach(b => b.classList.remove('active'));
-      refDigitGroup.querySelectorAll('.ref-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      persistRef();
-      if (fullData.length >= 2) run();
-    });
-  }
-
-  const autoChk = document.getElementById('autoFetchEnabled');
-  if (autoChk) {
-    autoChk.addEventListener('change', function () {
-      if (this.checked) startAutoFetch();
+  // 自动刷新开关
+  const autoFetchChk = document.getElementById('autoFetchEnabled');
+  if (autoFetchChk) {
+    autoFetchChk.addEventListener('change', () => {
+      if (autoFetchChk.checked) startAutoFetch();
       else { stopAutoFetch(); setFetchStatus('自动刷新已关闭'); }
     });
   }
 
-  const intervalSel = document.getElementById('fetchInterval');
-  if (intervalSel) {
-    intervalSel.addEventListener('change', () => {
-      if (document.getElementById('autoFetchEnabled')?.checked) startAutoFetch();
+  // 获取间隔
+  const fetchIntervalSel = document.getElementById('fetchInterval');
+  if (fetchIntervalSel) {
+    fetchIntervalSel.addEventListener('change', () => {
+      if (autoFetchChk && autoFetchChk.checked) startAutoFetch();
     });
   }
 
-  document.addEventListener('visibilitychange', () => {
-    const chk = document.getElementById('autoFetchEnabled');
-    if (document.hidden) {
-      stopAutoFetch();
-      setFetchStatus('页面已隐藏，自动刷新暂停');
-    } else if (chk && chk.checked) {
-      startAutoFetch();
-      fetchLatest(false);
-    }
-  });
+  // 声音开关
+  const soundChk = document.getElementById('soundEnabled');
+  if (soundChk) {
+    soundChk.addEventListener('change', () => {
+      try { localStorage.setItem(SOUND_KEY, soundChk.checked ? 'true' : 'false'); } catch (e) {}
+    });
+  }
 
-  setTimeout(() => {
-    fetchLatest(false);
-    startAutoFetch();
-  }, 800);
-});
+  // 历史页数
+  const historyPagesSel = document.getElementById('historyPages');
+  if (historyPagesSel) {
+    historyPagesSel.addEventListener('change', () => {
+      try { localStorage.setItem(HISTORY_PAGES_KEY, historyPagesSel.value); } catch (e) {}
+    });
+  }
+
+  // 统计窗口
+  const windowSizeInput = document.getElementById('windowSize');
+  if (windowSizeInput) {
+    windowSizeInput.addEventListener('input', () => {
+      if (fullData.length >= 2) {
+        const n = parseInt(windowSizeInput.value, 10);
+        if (Number.isFinite(n) && n >= 3) {
+          renderHitCycles(fullData, n, currentRef());
+        }
+      }
+    });
+  }
+
+  // 输入框
+  const input = document.getElementById('input');
+  if (input) {
+    input.addEventListener('input', () => {
+      userDirty = true;
+      renderColoredDisplay();
+      if (saveTimer) clearTimeout(saveTimer);
+      saveTimer = setTimeout(() => {
+        syncTextareaEdits();
+        persistFullData();
+      }, 500);
+    });
+    input.addEventListener('scroll', () => {
+      const display = document.getElementById('coloredDisplay');
+      if (display) {
+        display.scrollTop = input.scrollTop;
+        display.scrollLeft = input.scrollLeft;
+      }
+    });
+  }
+}
+
+/* ================= 初始化 ================= */
+function init() {
+  // 字号
+  try {
+    const savedScale = parseFloat(localStorage.getItem(FD_SIZE_KEY));
+    if (Number.isFinite(savedScale)) fdScale = savedScale;
+  } catch (e) {}
+  applyFdScale();
+
+  // 声音
+  try {
+    const s = localStorage.getItem(SOUND_KEY);
+    if (s === 'false') {
+      const chk = document.getElementById('soundEnabled');
+      if (chk) chk.checked = false;
+    }
+  } catch (e) {}
+
+  // 历史页数
+  try {
+    const h = localStorage.getItem(HISTORY_PAGES_KEY);
+    if (h) {
+      const sel = document.getElementById('historyPages');
+      if (sel) sel.value = h;
+    }
+  } catch (e) {}
+
+  // 显示全部
+  try {
+    showAllRecords = localStorage.getItem(DISPLAY_COUNT_KEY) === 'true';
+  } catch (e) {}
+  updateToggleButtonText();
+
+  // 回测显示
+  try {
+    showBacktest = localStorage.getItem(BACKTEST_KEY) === 'true';
+  } catch (e) {}
+  applyBacktestVisibility();
+
+  // 参考模式
+  try {
+    const mode = localStorage.getItem(REF_MODE_KEY);
+    const val = localStorage.getItem(REF_VALUE_KEY);
+    if (mode === 'rule4' && val) {
+      const btn = document.querySelector(`#refRule4Group .ref-btn[data-rule4pos="${val}"]`);
+      if (btn) { bindRefGroupClear(); btn.classList.add('active'); }
+    } else if (mode === 'rule12' && val) {
+      const btn = document.querySelector(`#refRule12Group .ref-btn[data-rule12pos="${val}"]`);
+      if (btn) { bindRefGroupClear(); btn.classList.add('active'); }
+    } else if (mode === 'rule22' && val) {
+      const btn = document.querySelector(`#refRule22Group .ref-btn[data-rule22pos="${val}"]`);
+      if (btn) { bindRefGroupClear(); btn.classList.add('active'); }
+    } else if (mode === 'pos' && val) {
+      const btn = document.querySelector(`#refGroup .ref-btn[data-pos="${val}"]`);
+      if (btn) { bindRefGroupClear(); btn.classList.add('active'); }
+    } else if (mode === 'digit' && val) {
+      const btn = document.querySelector(`#refDigitGroup .ref-btn[data-digit="${val}"]`);
+      if (btn) { bindRefGroupClear(); btn.classList.add('active'); }
+    }
+  } catch (e) {}
+
+  // 走势限制
+  try {
+    const t = localStorage.getItem(TREND_LIMIT_KEY);
+    if (t) trendLimit = (t === 'all') ? 'all' : parseInt(t, 10);
+  } catch (e) {}
+  applyTrendLimitUI();
+
+  // 走势位置
+  try {
+    const tp = localStorage.getItem(TREND_POS_KEY);
+    if (tp) trendPos = parseInt(tp, 10) || 1;
+    const tpa = localStorage.getItem(TREND_POS_AUTO_KEY);
+    if (tpa === 'false') trendPosAuto = false;
+  } catch (e) {}
+  applyTrendPosUI();
+
+  // 规则可见性
+  try {
+    const v = localStorage.getItem(RULE_VIS_KEY);
+    if (v) ruleVisibility = Object.assign({ rule1: true, rule12: true, rule22: true, rule2: true, rule4: true }, JSON.parse(v));
+  } catch (e) {}
+  applyRuleVisibilityUI();
+
+  // 分析面板可见性
+  try {
+    const pv = localStorage.getItem(PANEL_VIS_KEY);
+    if (pv) panelVisible = Object.assign({ crossStats: true, crossDetail: true, cycle: true }, JSON.parse(pv));
+  } catch (e) {}
+  applyPanelVisibilityUI();
+
+  // 备注
+  try {
+    const n = localStorage.getItem(NOTE_KEY);
+    if (n) {
+      const noteInput = document.getElementById('noteInput');
+      if (noteInput) noteInput.value = n;
+    }
+  } catch (e) {}
+
+  // 历史数据
+  try {
+    const saved = localStorage.getItem(LS_KEY);
+    if (saved) fullData = parseData(saved);
+  } catch (e) {}
+
+  // 绑定事件
+  bindEvents();
+
+  // 首次渲染
+  if (fullData.length >= 2) {
+    renderAll(fullData, { rewriteTextarea: true });
+  } else {
+    renderColoredDisplay();
+  }
+
+  // 启动自动获取
+  const autoFetchChk = document.getElementById('autoFetchEnabled');
+  if (autoFetchChk && autoFetchChk.checked) startAutoFetch();
+}
+
+document.addEventListener('DOMContentLoaded', init);
 </script>
 </body>
 </html>
